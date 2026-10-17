@@ -1,5 +1,5 @@
 // オフライン対応：アプリ本体は先に保存、音声・フォントは使ったときに保存
-const CACHE = 'bounceparade-v2';
+const CACHE = 'bounceparade-v3';
 const CORE = [
   './', 'index.html', 'css/style.css', 'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png',
   'js/main.js', 'js/ui.js', 'js/game.js', 'js/player.js', 'js/physics.js', 'js/level.js', 'js/stages.js', 'js/entities.js',

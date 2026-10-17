@@ -8,7 +8,7 @@ export const THEMES = {
   sky: { name: '天空都市', sky: ['#4aaaf8', '#e8f7ff'], far: '#ffffff', mid: '#d6ebff', top: '#ffffff', topHi: '#ffe58a', body: '#dfe7f5', bodyDk: '#b4c2da', bodyLt: '#f6f9ff', brick: ['#f2d27a', '#c9a24a'], oneway: '#ffffff', deco: 'clouds' },
   volcano: { name: '火山', sky: ['#200808', '#a8361a'], far: '#4a1a14', mid: '#5a2418', top: '#8a5a3a', topHi: '#c27a3a', body: '#4a3434', bodyDk: '#2e2020', bodyLt: '#6a4a44', brick: ['#6a4a3a', '#3a2a22'], oneway: '#7a5a44', deco: 'volcano' },
   amusement: { name: '遊園地', sky: ['#33206a', '#ff8fb1'], far: '#5a3a8a', mid: '#7a4aa0', top: '#ff5a9a', topHi: '#ffd0e4', body: '#ffe4ef', bodyDk: '#f2a8c8', bodyLt: '#ffffff', brick: ['#5ac8ff', '#2a8ad0'], oneway: '#ffd23f', deco: 'tents' },
-  mine: { name: '地下鉱山', sky: ['#0e0b08', '#2e241c'], far: '#211a14', mid: '#30261c', top: '#8a7356', topHi: '#a88e6a', body: '#5a4836', bodyDk: '#3e3125', bodyLt: '#6e5a44', brick: ['#7a6040', '#4a3a26'], oneway: '#8a6a3a', deco: 'mine' },
+  mine: { name: '地下鉱山', sky: ['#0c0f1e', '#1d2440'], far: '#211a14', mid: '#30261c', top: '#8a7356', topHi: '#a88e6a', body: '#5a4836', bodyDk: '#3e3125', bodyLt: '#6e5a44', brick: ['#7a6040', '#4a3a26'], oneway: '#8a6a3a', deco: 'mine' },
   ice: { name: '氷雪城', sky: ['#86ccff', '#eef9ff'], far: '#cfe6f7', mid: '#a9d0ec', top: '#ffffff', topHi: '#e6f6ff', body: '#9cc9ea', bodyDk: '#6aa4d0', bodyLt: '#c4e2f6', brick: ['#c9d9ea', '#8aa0bc'], oneway: '#dff2ff', deco: 'castle' },
   final: { name: 'パレードタワー', sky: ['#120d36', '#5a2a8a'], far: '#2a1f5a', mid: '#3a2a72', top: '#ffd23f', topHi: '#fff3a0', body: '#5a4ab8', bodyDk: '#3a2f8a', bodyLt: '#7a6ad8', brick: ['#ff5a8a', '#c02a5a'], oneway: '#ffd23f', deco: 'parade' },
 };
@@ -324,7 +324,16 @@ export class Renderer {
       const W = gen ? (gen.width / gen.height) * 360 : 1024;
       const ox = -((camX * k) % W);
       const oy = (viewH - 360) + (g.level.ph - viewH - camY) * ky;
-      for (let x = ox - W; x < viewW; x += W) ctx.drawImage(img, x, oy + (layer === 'mid' ? 20 : 0), W, 360);
+      if (gen) {
+        // 生成画像は1枚おきに左右反転して並べる（端が必ずつながる）
+        ctx.globalAlpha = 0.88; // 手前のゲーム要素が見やすいよう、少しだけ空色になじませる
+        const i0 = Math.floor((camX * k) / W) - 1;
+        for (let i = i0, x = ox - W; x < viewW; i++, x += W) {
+          if (i % 2) { ctx.save(); ctx.translate(x + W, oy); ctx.scale(-1, 1); ctx.drawImage(img, 0, 0, W, 360); ctx.restore(); }
+          else ctx.drawImage(img, x, oy, W, 360);
+        }
+        ctx.globalAlpha = 1;
+      } else for (let x = ox - W; x < viewW; x += W) ctx.drawImage(img, x, oy + (layer === 'mid' ? 20 : 0), W, 360);
     }
 
     // ワールド

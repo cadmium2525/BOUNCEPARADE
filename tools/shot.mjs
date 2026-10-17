@@ -19,7 +19,8 @@ if (mode === 'map') {
   await el.screenshot({ path: out });
 } else {
   await page.goto(`${base}?${arg}`);
-  await page.waitForTimeout(800);
+  await page.waitForFunction(() => window.__app && window.__app.scene, null, { timeout: 30000 });
+  await page.waitForTimeout(600);
   for (const step of keys.split(',').filter(Boolean)) {
     const [k, d] = step.split(':');
     if (k === 'wait') { await page.waitForTimeout(Number(d)); continue; }

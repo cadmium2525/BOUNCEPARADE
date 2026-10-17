@@ -30,20 +30,27 @@ function putCenter(ctx, im, x, y, h, rot = 0, sx = 1, sy = 1) {
   ctx.drawImage(im, -w / 2, -h / 2, w, h);
   ctx.restore();
 }
+// 足もとの影（背景から浮かせて見やすくする）
+function shadow(ctx, x, y, w) {
+  ctx.save(); ctx.fillStyle = 'rgba(0,0,0,0.28)'; ctx.beginPath(); ctx.ellipse(x, y - 1, w / 2, w / 9, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+}
 function flashed(ctx, on, fn) {
   if (!on) return fn();
   ctx.save(); ctx.filter = 'brightness(2.6) saturate(0.3)'; fn(); ctx.restore();
 }
 
 // ===== 敵・ギミック =====
-const ENEMY_H = { korobot: 30, gachigachi: 32, fuwadrone: 28, purun: 28, togemaru: 30, ponpon: 32 };
+// 画像を収める箱（幅, 高さ）。当たり判定より少しだけ大きく
+const ENEMY_BOX = { korobot: [32, 32], gachigachi: [40, 32], fuwadrone: [36, 30], purun: [36, 26], togemaru: [32, 32], ponpon: [38, 32] };
+const fitH = (im, [bw, bh]) => Math.min(bh, (bw * im.height) / im.width);
 
 export function drawEntitySprite(ctx, S, e, t) {
   const bottom = e.y + e.h / 2;
   const enemy = S['enemy_' + e.type];
   if (enemy) {
-    const h = ENEMY_H[e.type];
+    const h = fitH(enemy, ENEMY_BOX[e.type]);
     const flip = e.dir < 0;
+    if (e.type !== 'fuwadrone') shadow(ctx, e.x, bottom + 1, e.w * 1.1);
     flashed(ctx, e.flash > 0, () => {
       switch (e.type) {
         case 'korobot': put(ctx, enemy, e.x, bottom + 1 - Math.abs(Math.sin(t * 10)) * 1.5, h, flip); break;
@@ -73,7 +80,7 @@ export function drawEntitySprite(ctx, S, e, t) {
 }
 
 // ===== ボス =====
-const BOSS_H = { drill_rhino: 70, storm_cloud: 70, magma_golem: 96, bumper_spider: 80, mogu_driller: 74, freeze_king: 96 };
+const BOSS_BOX = { drill_rhino: [124, 76], storm_cloud: [116, 80], magma_golem: [100, 96], bumper_spider: [108, 80], mogu_driller: [90, 80], freeze_king: [92, 100] };
 const WEAK_POSE = {
   drill_rhino: (b) => b.state === 'Vulnerable',
   storm_cloud: (b) => b.state === 'Vulnerable' || b.state === 'Recovery',
@@ -85,9 +92,11 @@ const WEAK_POSE = {
 
 export function drawBossSprite(ctx, S, b, t, floorY) {
   const weak = WEAK_POSE[b.id](b);
-  const im = S[`boss_${b.id}_${weak ? 'weak' : 'normal'}`] || S[`boss_${b.id}_normal`];
-  if (!im) return false;
-  const h = BOSS_H[b.id];
+  const base = S[`boss_${b.id}_normal`];
+  if (!base) return false;
+  const im = (weak && S[`boss_${b.id}_weak`]) || base;
+  // 縮尺は通常ポーズで決め、弱点ポーズも同じ縮尺で描く
+  const h = fitH(base, BOSS_BOX[b.id]) * (im.height / base.height);
   const fl = b.flash > 0 && Math.floor(b.flash * 20) % 2 === 0;
   // 予告の表示（画像の外側）
   if (b.id === 'storm_cloud' && b.state === 'Telegraph') {
@@ -102,6 +111,7 @@ export function drawBossSprite(ctx, S, b, t, floorY) {
   if (b.id === 'magma_golem' && !weak) { ctx.globalAlpha = 0.25 + 0.1 * Math.sin(t * 5); ctx.fillStyle = 'rgba(255,90,0,0.4)'; ctx.beginPath(); ctx.arc(b.x, b.y - 6, 44, 0, 7); ctx.fill(); ctx.globalAlpha = 1; }
   const shake = b.state === 'Telegraph' ? Math.sin(t * 60) * 1.5 : 0;
   const flying = b.id === 'storm_cloud';
+  if (!flying) shadow(ctx, b.x, b.y + b.h / 2 + 2, b.w * 1.3);
   flashed(ctx, fl, () => {
     if (flying) putCenter(ctx, im, b.x + shake, b.y + Math.sin(t * 2) * 2, h, 0, b.facing < 0 ? -1 : 1, 1);
     else put(ctx, im, b.x + shake, b.y + b.h / 2 + 2, h, b.facing < 0);
