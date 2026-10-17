@@ -1,0 +1,9 @@
+{
+ "preset": "pon",
+ "pitch": -2,
+ "length": 0.5,
+ "tone": 0.3,
+ "space": 0.1,
+ "punch": 0.4,
+ "seed": 3
+}

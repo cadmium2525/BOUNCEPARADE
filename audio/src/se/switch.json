@@ -1,0 +1,9 @@
+{
+ "preset": "toggle",
+ "pitch": 0,
+ "length": 1,
+ "tone": 0.2,
+ "space": 0.1,
+ "punch": 0.6,
+ "seed": 13
+}

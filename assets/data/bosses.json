@@ -1,0 +1,46 @@
+{
+  "bossHpRange": [
+    3,
+    5
+  ],
+  "phase2HpFraction": 0.5,
+  "startingBallClearRequired": true,
+  "bosses": [
+    {
+      "id": "drill_rhino",
+      "stage": "factory",
+      "reward": "bowling",
+      "mechanic": "突進後に弱点露出"
+    },
+    {
+      "id": "storm_cloud",
+      "stage": "sky",
+      "reward": "bubble",
+      "mechanic": "風向き変化と頭上弱点"
+    },
+    {
+      "id": "magma_golem",
+      "stage": "volcano",
+      "reward": "fire",
+      "mechanic": "冷却装置で弱点露出"
+    },
+    {
+      "id": "bumper_spider",
+      "stage": "amusement",
+      "reward": "rugby",
+      "mechanic": "反射角で背後弱点"
+    },
+    {
+      "id": "mogu_driller",
+      "stage": "mine",
+      "reward": "magnet",
+      "mechanic": "スイッチで弱点露出"
+    },
+    {
+      "id": "freeze_king",
+      "stage": "ice",
+      "reward": "slime",
+      "mechanic": "氷の足場経由で背後攻撃"
+    }
+  ]
+}

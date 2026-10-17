@@ -1,0 +1,13 @@
+{
+  "changeCooldownSeconds": 0.12,
+  "inputBufferSeconds": 0.5,
+  "forcedAreaIgnoresCooldown": true,
+  "retainVelocityOnTransform": true,
+  "restingToBounceKick": true,
+  "maxEquippedBalls": 6,
+  "startingBalls": [
+    "soccer",
+    "marble",
+    "pingpong"
+  ]
+}

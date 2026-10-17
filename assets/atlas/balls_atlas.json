@@ -1,0 +1,460 @@
+{
+  "image": "balls_atlas.png",
+  "tileWidth": 128,
+  "tileHeight": 128,
+  "columns": 6,
+  "rows": 3,
+  "units": "game pixels for collider; displayed sprite sizes require per-ball scaling",
+  "sprites": {
+    "soccer": {
+      "name_ja": "サッカーボール",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "collider": {
+        "shape": "circle",
+        "radius": 20,
+        "width": null,
+        "height": null
+      },
+      "physics": {
+        "mass": 1,
+        "restitution": 0.72,
+        "gravityScale": 1.0
+      },
+      "unlock": "bounce"
+    },
+    "marble": {
+      "name_ja": "ビー玉",
+      "frame": {
+        "x": 128,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "collider": {
+        "shape": "circle",
+        "radius": 7,
+        "width": null,
+        "height": null
+      },
+      "physics": {
+        "mass": 1.5,
+        "restitution": 0.04,
+        "gravityScale": 1.0
+      },
+      "unlock": "utility"
+    },
+    "pingpong": {
+      "name_ja": "ピンポン玉",
+      "frame": {
+        "x": 256,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "collider": {
+        "shape": "circle",
+        "radius": 13,
+        "width": null,
+        "height": null
+      },
+      "physics": {
+        "mass": 0.2,
+        "restitution": 0.94,
+        "gravityScale": 1.0
+      },
+      "unlock": "bounce"
+    },
+    "bowling": {
+      "name_ja": "ボウリング球",
+      "frame": {
+        "x": 384,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "collider": {
+        "shape": "circle",
+        "radius": 24,
+        "width": null,
+        "height": null
+      },
+      "physics": {
+        "mass": 6,
+        "restitution": 0.02,
+        "gravityScale": 1.0
+      },
+      "unlock": "utility"
+    },
+    "bubble": {
+      "name_ja": "シャボン玉",
+      "frame": {
+        "x": 512,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "collider": {
+        "shape": "circle",
+        "radius": 18,
+        "width": null,
+        "height": null
+      },
+      "physics": {
+        "mass": 0.08,
+        "restitution": 0.2,
+        "gravityScale": 1.0
+      },
+      "unlock": "special"
+    },
+    "fire": {
+      "name_ja": "火の玉",
+      "frame": {
+        "x": 640,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "collider": {
+        "shape": "circle",
+        "radius": 18,
+        "width": null,
+        "height": null
+      },
+      "physics": {
+        "mass": 1,
+        "restitution": 0.65,
+        "gravityScale": 1.0
+      },
+      "unlock": "special"
+    },
+    "rugby": {
+      "name_ja": "ラグビーボール",
+      "frame": {
+        "x": 0,
+        "y": 128,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "collider": {
+        "shape": "ellipse",
+        "radius": 24,
+        "width": 48,
+        "height": 27
+      },
+      "physics": {
+        "mass": 1.1,
+        "restitution": 0.64,
+        "gravityScale": 1.0
+      },
+      "unlock": "special"
+    },
+    "magnet": {
+      "name_ja": "磁石ボール",
+      "frame": {
+        "x": 128,
+        "y": 128,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "collider": {
+        "shape": "circle",
+        "radius": 18,
+        "width": null,
+        "height": null
+      },
+      "physics": {
+        "mass": 2,
+        "restitution": 0.55,
+        "gravityScale": 1.0
+      },
+      "unlock": "special"
+    },
+    "slime": {
+      "name_ja": "スライム球",
+      "frame": {
+        "x": 256,
+        "y": 128,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "collider": {
+        "shape": "circle",
+        "radius": 19,
+        "width": null,
+        "height": null
+      },
+      "physics": {
+        "mass": 1,
+        "restitution": 0.5,
+        "gravityScale": 1.0
+      },
+      "unlock": "special"
+    },
+    "baseball": {
+      "name_ja": "野球ボール",
+      "frame": {
+        "x": 384,
+        "y": 128,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "collider": {
+        "shape": "circle",
+        "radius": 11,
+        "width": null,
+        "height": null
+      },
+      "physics": {
+        "mass": 1.3,
+        "restitution": 0.55,
+        "gravityScale": 1.0
+      },
+      "unlock": "bonus"
+    },
+    "basketball": {
+      "name_ja": "バスケットボール",
+      "frame": {
+        "x": 512,
+        "y": 128,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "collider": {
+        "shape": "circle",
+        "radius": 22,
+        "width": null,
+        "height": null
+      },
+      "physics": {
+        "mass": 1.2,
+        "restitution": 0.87,
+        "gravityScale": 1.0
+      },
+      "unlock": "bonus"
+    },
+    "volleyball": {
+      "name_ja": "バレーボール",
+      "frame": {
+        "x": 640,
+        "y": 128,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "collider": {
+        "shape": "circle",
+        "radius": 21,
+        "width": null,
+        "height": null
+      },
+      "physics": {
+        "mass": 0.8,
+        "restitution": 0.8,
+        "gravityScale": 1.0
+      },
+      "unlock": "bonus"
+    },
+    "tennis": {
+      "name_ja": "テニスボール",
+      "frame": {
+        "x": 0,
+        "y": 256,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "collider": {
+        "shape": "circle",
+        "radius": 14,
+        "width": null,
+        "height": null
+      },
+      "physics": {
+        "mass": 0.7,
+        "restitution": 0.83,
+        "gravityScale": 1.0
+      },
+      "unlock": "bonus"
+    },
+    "golf": {
+      "name_ja": "ゴルフボール",
+      "frame": {
+        "x": 128,
+        "y": 256,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "collider": {
+        "shape": "circle",
+        "radius": 9,
+        "width": null,
+        "height": null
+      },
+      "physics": {
+        "mass": 1.4,
+        "restitution": 0.48,
+        "gravityScale": 1.0
+      },
+      "unlock": "bonus"
+    },
+    "beach": {
+      "name_ja": "ビーチボール",
+      "frame": {
+        "x": 256,
+        "y": 256,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "collider": {
+        "shape": "circle",
+        "radius": 25,
+        "width": null,
+        "height": null
+      },
+      "physics": {
+        "mass": 0.14,
+        "restitution": 0.82,
+        "gravityScale": 1.0
+      },
+      "unlock": "bonus"
+    },
+    "glass": {
+      "name_ja": "ガラス玉",
+      "frame": {
+        "x": 384,
+        "y": 256,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "collider": {
+        "shape": "circle",
+        "radius": 18,
+        "width": null,
+        "height": null
+      },
+      "physics": {
+        "mass": 1,
+        "restitution": 0.44,
+        "gravityScale": 1.0
+      },
+      "unlock": "bonus"
+    },
+    "spike": {
+      "name_ja": "トゲ鉄球",
+      "frame": {
+        "x": 512,
+        "y": 256,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "collider": {
+        "shape": "circle",
+        "radius": 22,
+        "width": null,
+        "height": null
+      },
+      "physics": {
+        "mass": 4,
+        "restitution": 0.08,
+        "gravityScale": 1.0
+      },
+      "unlock": "bonus"
+    },
+    "dandelion": {
+      "name_ja": "綿毛玉",
+      "frame": {
+        "x": 640,
+        "y": 256,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "collider": {
+        "shape": "circle",
+        "radius": 19,
+        "width": null,
+        "height": null
+      },
+      "physics": {
+        "mass": 0.03,
+        "restitution": 0.1,
+        "gravityScale": 1.0
+      },
+      "unlock": "bonus"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+ "preset": "pop",
+ "pitch": 6,
+ "length": 0.6,
+ "tone": 0.5,
+ "space": 0.05,
+ "punch": 0.3,
+ "seed": 2
+}

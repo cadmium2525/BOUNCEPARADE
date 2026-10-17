@@ -1,0 +1,9 @@
+{
+ "preset": "riser",
+ "pitch": 0,
+ "length": 0.35,
+ "tone": 0.2,
+ "space": 0.2,
+ "punch": 0.4,
+ "seed": 32
+}

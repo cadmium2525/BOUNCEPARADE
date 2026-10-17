@@ -1,0 +1,37 @@
+{
+  "defaultHp": 3,
+  "hitDamage": 1,
+  "invulnerabilitySeconds": 1.2,
+  "enemies": [
+    {
+      "id": "korobot",
+      "behavior": "巡回",
+      "counter": "上から踏むと撃破"
+    },
+    {
+      "id": "gachigachi",
+      "behavior": "装甲",
+      "counter": "重量攻撃で撃破"
+    },
+    {
+      "id": "fuwadrone",
+      "behavior": "浮遊",
+      "counter": "上から踏むと撃破"
+    },
+    {
+      "id": "purun",
+      "behavior": "弾性",
+      "counter": "倒せずジャンプ台"
+    },
+    {
+      "id": "togemaru",
+      "behavior": "往復",
+      "counter": "回避/装置"
+    },
+    {
+      "id": "ponpon",
+      "behavior": "砲台",
+      "counter": "弾を反射"
+    }
+  ]
+}

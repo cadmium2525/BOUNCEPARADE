@@ -1,0 +1,9 @@
+{
+ "preset": "laser",
+ "pitch": -14,
+ "length": 0.35,
+ "tone": -0.2,
+ "space": 0.1,
+ "punch": 0.5,
+ "seed": 26
+}

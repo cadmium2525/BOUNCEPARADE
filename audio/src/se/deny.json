@@ -1,0 +1,9 @@
+{
+ "preset": "blip",
+ "pitch": -9,
+ "length": 0.8,
+ "tone": -0.3,
+ "space": 0,
+ "punch": 0.5,
+ "seed": 24
+}

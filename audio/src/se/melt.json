@@ -1,0 +1,41 @@
+{
+ "layers": [
+  {
+   "src": "noise",
+   "filter": {
+    "type": "hp",
+    "freq": [
+     [
+      0,
+      2500
+     ],
+     [
+      0.5,
+      6000
+     ]
+    ]
+   },
+   "amp": {
+    "a": 0.01,
+    "d": 0.55
+   },
+   "gain": -6,
+   "width": 0.6
+  },
+  {
+   "src": "crackle",
+   "density": 60,
+   "filter": {
+    "type": "hp",
+    "freq": 3000
+   },
+   "amp": {
+    "a": 0.01,
+    "d": 0.4
+   },
+   "gain": -10
+  }
+ ],
+ "normalize": -3,
+ "seed": 17
+}

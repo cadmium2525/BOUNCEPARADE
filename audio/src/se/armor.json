@@ -1,0 +1,9 @@
+{
+ "preset": "impact",
+ "pitch": 9,
+ "length": 0.25,
+ "tone": 0.6,
+ "space": 0.1,
+ "punch": 0.6,
+ "seed": 18
+}

@@ -1,0 +1,9 @@
+{
+ "preset": "bell",
+ "pitch": 7,
+ "length": 0.35,
+ "tone": 0.5,
+ "space": 0.2,
+ "punch": 0.7,
+ "seed": 12
+}

@@ -1,0 +1,9 @@
+{
+ "preset": "boom",
+ "pitch": 2,
+ "length": 0.4,
+ "tone": -0.2,
+ "space": 0.1,
+ "punch": 0.8,
+ "seed": 5
+}

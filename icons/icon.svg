@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+ <defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5fc2ff"/><stop offset="1" stop-color="#c9f1ff"/></linearGradient>
+  <radialGradient id="ball" cx="0.38" cy="0.35" r="0.7"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d9dce8"/></radialGradient>
+ </defs>
+ <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+ <rect y="392" width="512" height="120" fill="#5cd13a"/>
+ <rect y="420" width="512" height="92" fill="#b8743a"/>
+ <ellipse cx="256" cy="398" rx="110" ry="18" fill="#000" opacity="0.18"/>
+ <circle cx="256" cy="222" r="150" fill="url(#ball)" stroke="#1b1b2e" stroke-width="16"/>
+ <polygon points="256,160 316,204 293,274 219,274 196,204" fill="#1b1b2e"/>
+ <g stroke="#1b1b2e" stroke-width="12" stroke-linecap="round">
+  <line x1="256" y1="160" x2="256" y2="82"/><line x1="316" y1="204" x2="392" y2="180"/><line x1="293" y1="274" x2="340" y2="340"/><line x1="219" y1="274" x2="172" y2="340"/><line x1="196" y1="204" x2="120" y2="180"/>
+ </g>
+ <ellipse cx="200" cy="130" rx="40" ry="22" fill="#fff" opacity="0.7" transform="rotate(-30 200 130)"/>
+</svg>

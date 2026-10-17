@@ -1,0 +1,9 @@
+{
+ "preset": "error",
+ "pitch": -3,
+ "length": 0.5,
+ "tone": 0,
+ "space": 0.1,
+ "punch": 0.7,
+ "seed": 21
+}

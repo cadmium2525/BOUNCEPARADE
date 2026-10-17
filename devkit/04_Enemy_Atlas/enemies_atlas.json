@@ -1,0 +1,90 @@
+{
+  "image": "enemies_atlas.png",
+  "sprites": {
+    "korobot": {
+      "name_ja": "コロボット",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "status": "concept placeholder: single frame only"
+    },
+    "gachigachi": {
+      "name_ja": "ガチガチ",
+      "frame": {
+        "x": 128,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "status": "concept placeholder: single frame only"
+    },
+    "fuwadrone": {
+      "name_ja": "フワドローン",
+      "frame": {
+        "x": 256,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "status": "concept placeholder: single frame only"
+    },
+    "purun": {
+      "name_ja": "プルン",
+      "frame": {
+        "x": 384,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "status": "concept placeholder: single frame only"
+    },
+    "togemaru": {
+      "name_ja": "トゲマル",
+      "frame": {
+        "x": 0,
+        "y": 128,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "status": "concept placeholder: single frame only"
+    },
+    "ponpon": {
+      "name_ja": "ポンポン砲",
+      "frame": {
+        "x": 128,
+        "y": 128,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "status": "concept placeholder: single frame only"
+    }
+  },
+  "note": "Concept placeholders, not animation-ready character sheets"
+}

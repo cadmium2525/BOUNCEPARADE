@@ -1,0 +1,9 @@
+{
+ "preset": "jump",
+ "pitch": 0,
+ "length": 0.8,
+ "tone": 0.2,
+ "space": 0.1,
+ "punch": 0.5,
+ "seed": 11
+}

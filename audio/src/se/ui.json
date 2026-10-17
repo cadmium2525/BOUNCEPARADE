@@ -1,0 +1,9 @@
+{
+ "preset": "tap",
+ "pitch": 3,
+ "length": 1,
+ "tone": 0.2,
+ "space": 0.05,
+ "punch": 0.5,
+ "seed": 38
+}

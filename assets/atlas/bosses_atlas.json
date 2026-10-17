@@ -1,0 +1,90 @@
+{
+  "image": "bosses_atlas.png",
+  "sprites": {
+    "drill_rhino": {
+      "name_ja": "ドリルライノ",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "status": "concept placeholder: single frame only"
+    },
+    "storm_cloud": {
+      "name_ja": "ストームクラウド",
+      "frame": {
+        "x": 128,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "status": "concept placeholder: single frame only"
+    },
+    "magma_golem": {
+      "name_ja": "マグマゴーレム",
+      "frame": {
+        "x": 256,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "status": "concept placeholder: single frame only"
+    },
+    "bumper_spider": {
+      "name_ja": "バンパースパイダー",
+      "frame": {
+        "x": 384,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "status": "concept placeholder: single frame only"
+    },
+    "mogu_driller": {
+      "name_ja": "モグドリラー",
+      "frame": {
+        "x": 0,
+        "y": 128,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "status": "concept placeholder: single frame only"
+    },
+    "freeze_king": {
+      "name_ja": "フリーズキング",
+      "frame": {
+        "x": 128,
+        "y": 128,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "status": "concept placeholder: single frame only"
+    }
+  },
+  "note": "Concept placeholders, not animation-ready character sheets"
+}

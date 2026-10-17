@@ -1,0 +1,9 @@
+{
+ "preset": "explosion",
+ "pitch": 4,
+ "length": 0.5,
+ "tone": 0.2,
+ "space": 0.2,
+ "punch": 0.9,
+ "seed": 16
+}

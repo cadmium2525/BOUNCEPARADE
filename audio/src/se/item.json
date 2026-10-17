@@ -1,0 +1,9 @@
+{
+ "preset": "powerup",
+ "pitch": 3,
+ "length": 0.6,
+ "tone": 0.3,
+ "space": 0.2,
+ "punch": 0.4,
+ "seed": 7
+}

@@ -1,0 +1,94 @@
+{
+ "bgm": {
+  "title": {
+   "loopStart": 27.428571428571427,
+   "loopEnd": 54.857142857142854
+  },
+  "select": {
+   "loopStart": 17.77777777777778,
+   "loopEnd": 35.55555555555556
+  },
+  "grass": {
+   "loopStart": 25.6,
+   "loopEnd": 51.2
+  },
+  "factory": {
+   "loopStart": 25.6,
+   "loopEnd": 51.2
+  },
+  "sky": {
+   "loopStart": 27.428571428571427,
+   "loopEnd": 54.857142857142854
+  },
+  "volcano": {
+   "loopStart": 24,
+   "loopEnd": 48
+  },
+  "amusement": {
+   "loopStart": 25.6,
+   "loopEnd": 51.2
+  },
+  "mine": {
+   "loopStart": 30,
+   "loopEnd": 60
+  },
+  "ice": {
+   "loopStart": 29.09090909090909,
+   "loopEnd": 58.18181818181818
+  },
+  "boss": {
+   "loopStart": 22.58823529411765,
+   "loopEnd": 45.1764705882353
+  },
+  "final": {
+   "loopStart": 24.303797468354432,
+   "loopEnd": 48.607594936708864
+  },
+  "clear": {
+   "loop": false
+  }
+ },
+ "se": [
+  "bounce",
+  "bounce_light",
+  "bounce_metal",
+  "bounce_rugby",
+  "heavy",
+  "land",
+  "item",
+  "checkpoint",
+  "click",
+  "launch",
+  "spring",
+  "bumper",
+  "switch",
+  "door",
+  "stomp",
+  "break",
+  "melt",
+  "armor",
+  "cannon",
+  "reflect",
+  "hurt",
+  "miss",
+  "morph",
+  "deny",
+  "forced",
+  "magnet",
+  "slime",
+  "bossHit",
+  "bossDown",
+  "explode",
+  "bossWarn",
+  "charge",
+  "thunder",
+  "wind",
+  "freeze",
+  "goal",
+  "coin",
+  "ui",
+  "uiBack",
+  "uiStart",
+  "reward"
+ ]
+}

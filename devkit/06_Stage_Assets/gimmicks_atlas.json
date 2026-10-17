@@ -1,0 +1,118 @@
+{
+  "image": "gimmicks_atlas.png",
+  "sprites": {
+    "spikes": {
+      "name_ja": "トゲ",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "status": "concept placeholder: single frame only"
+    },
+    "spring": {
+      "name_ja": "バネ床",
+      "frame": {
+        "x": 128,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "status": "concept placeholder: single frame only"
+    },
+    "launcher": {
+      "name_ja": "発射装置",
+      "frame": {
+        "x": 256,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "status": "concept placeholder: single frame only"
+    },
+    "bumper": {
+      "name_ja": "バンパー",
+      "frame": {
+        "x": 384,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "status": "concept placeholder: single frame only"
+    },
+    "heavy_wall": {
+      "name_ja": "重量壁",
+      "frame": {
+        "x": 0,
+        "y": 128,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "status": "concept placeholder: single frame only"
+    },
+    "switch": {
+      "name_ja": "スイッチ",
+      "frame": {
+        "x": 128,
+        "y": 128,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "status": "concept placeholder: single frame only"
+    },
+    "wind": {
+      "name_ja": "送風装置",
+      "frame": {
+        "x": 256,
+        "y": 128,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "status": "concept placeholder: single frame only"
+    },
+    "checkpoint": {
+      "name_ja": "チェックポイント",
+      "frame": {
+        "x": 384,
+        "y": 128,
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "status": "concept placeholder: single frame only"
+    }
+  },
+  "note": "Concept placeholders, not animation-ready character sheets"
+}

@@ -1,0 +1,9 @@
+{
+ "preset": "success",
+ "pitch": 5,
+ "length": 1.4,
+ "tone": 0.4,
+ "space": 0.5,
+ "punch": 0.6,
+ "seed": 41
+}

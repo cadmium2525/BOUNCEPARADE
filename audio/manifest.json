@@ -1,0 +1,106 @@
+{
+ "bgm": {
+  "title": {
+   "file": "audio/bgm/title.mp3",
+   "loopStart": 27.42857,
+   "loopEnd": 54.85714
+  },
+  "select": {
+   "file": "audio/bgm/select.mp3",
+   "loopStart": 17.77778,
+   "loopEnd": 35.55556
+  },
+  "grass": {
+   "file": "audio/bgm/grass.mp3",
+   "loopStart": 25.6,
+   "loopEnd": 51.2
+  },
+  "factory": {
+   "file": "audio/bgm/factory.mp3",
+   "loopStart": 25.6,
+   "loopEnd": 51.2
+  },
+  "sky": {
+   "file": "audio/bgm/sky.mp3",
+   "loopStart": 27.42857,
+   "loopEnd": 54.85714
+  },
+  "volcano": {
+   "file": "audio/bgm/volcano.mp3",
+   "loopStart": 24,
+   "loopEnd": 48
+  },
+  "amusement": {
+   "file": "audio/bgm/amusement.mp3",
+   "loopStart": 25.6,
+   "loopEnd": 51.2
+  },
+  "mine": {
+   "file": "audio/bgm/mine.mp3",
+   "loopStart": 30,
+   "loopEnd": 60
+  },
+  "ice": {
+   "file": "audio/bgm/ice.mp3",
+   "loopStart": 29.09091,
+   "loopEnd": 58.18182
+  },
+  "boss": {
+   "file": "audio/bgm/boss.mp3",
+   "loopStart": 22.58824,
+   "loopEnd": 45.17647
+  },
+  "final": {
+   "file": "audio/bgm/final.mp3",
+   "loopStart": 24.3038,
+   "loopEnd": 48.60759
+  },
+  "clear": {
+   "file": "audio/bgm/clear.mp3",
+   "loop": false
+  }
+ },
+ "se": {
+  "bounce": "audio/se/bounce.wav",
+  "bounce_light": "audio/se/bounce_light.wav",
+  "bounce_metal": "audio/se/bounce_metal.wav",
+  "bounce_rugby": "audio/se/bounce_rugby.wav",
+  "heavy": "audio/se/heavy.wav",
+  "land": "audio/se/land.wav",
+  "item": "audio/se/item.wav",
+  "checkpoint": "audio/se/checkpoint.wav",
+  "click": "audio/se/click.wav",
+  "launch": "audio/se/launch.wav",
+  "spring": "audio/se/spring.wav",
+  "bumper": "audio/se/bumper.wav",
+  "switch": "audio/se/switch.wav",
+  "door": "audio/se/door.wav",
+  "stomp": "audio/se/stomp.wav",
+  "break": "audio/se/break.wav",
+  "melt": "audio/se/melt.wav",
+  "armor": "audio/se/armor.wav",
+  "cannon": "audio/se/cannon.wav",
+  "reflect": "audio/se/reflect.wav",
+  "hurt": "audio/se/hurt.wav",
+  "miss": "audio/se/miss.wav",
+  "morph": "audio/se/morph.wav",
+  "deny": "audio/se/deny.wav",
+  "forced": "audio/se/forced.wav",
+  "magnet": "audio/se/magnet.wav",
+  "slime": "audio/se/slime.wav",
+  "bossHit": "audio/se/bossHit.wav",
+  "bossDown": "audio/se/bossDown.wav",
+  "explode": "audio/se/explode.wav",
+  "bossWarn": "audio/se/bossWarn.wav",
+  "charge": "audio/se/charge.wav",
+  "thunder": "audio/se/thunder.wav",
+  "wind": "audio/se/wind.wav",
+  "freeze": "audio/se/freeze.wav",
+  "goal": "audio/se/goal.wav",
+  "coin": "audio/se/coin.wav",
+  "ui": "audio/se/ui.wav",
+  "uiBack": "audio/se/uiBack.wav",
+  "uiStart": "audio/se/uiStart.wav",
+  "reward": "audio/se/reward.wav"
+ }
+}

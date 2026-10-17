@@ -1,0 +1,9 @@
+{
+ "preset": "click",
+ "pitch": 0,
+ "length": 1,
+ "tone": 0,
+ "space": 0.05,
+ "punch": 0.5,
+ "seed": 9
+}

@@ -1,0 +1,9 @@
+{
+ "preset": "magic",
+ "pitch": 5,
+ "length": 0.3,
+ "tone": 0.4,
+ "space": 0.15,
+ "punch": 0.5,
+ "seed": 23
+}
