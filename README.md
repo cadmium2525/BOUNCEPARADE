@@ -58,7 +58,8 @@ BGM は 3 周ぶん描画して 2 周目をループ区間として切り出し�
 ## アセット
 
 - `assets/atlas/balls_atlas.png` … キット同梱のボールアトラス（6×3、各 128px）。**差し替え用のプロンプトは [docs/ball_atlas_prompt.md](docs/ball_atlas_prompt.md)**。1 球ずつ生成した画像は `python3 tools/pack_balls.py <フォルダ>` でアトラスにまとめられます。
-- 敵・ボス・ギミックはキットの画像が仮のアイコンだったため、`js/art.js` でコード描画しています。
+- 敵・ボス・ギミック・背景は、生成画像を `python3 tools/import_art.py ...` で取り込むと差し替わります（無い物は `js/art.js` のコード描画）。**プロンプトは [docs/art_prompts.md](docs/art_prompts.md)**。
+- 生成したボールのシート（6×3）は `python3 tools/slice_balls.py <画像>` で 256px セルのアトラスに変換できます（元画像は `assets/src/`）。
 
 ## 構成
 

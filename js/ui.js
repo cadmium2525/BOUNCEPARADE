@@ -101,6 +101,11 @@ export class TitleScene extends Scene {
     for (const b of this.balls) drawBallSprite(ctx, assets, data.balls[b.id], b.x, b.y, this.t * b.vx * 0.05, 1.2, 1.2);
     // ロゴ
     const cy = H * 0.34 + Math.sin(this.t * 2) * 4;
+    const logo = this.app.assets.sprites?.logo;
+    if (logo) {
+      const lh = 150, lw = (logo.width / logo.height) * lh;
+      ctx.drawImage(logo, W / 2 - lw / 2, cy - lh / 2 - 6, lw, lh);
+    } else {
     ctx.save();
     const g = ctx.createLinearGradient(0, cy - 40, 0, cy + 40);
     g.addColorStop(0, '#fff36b'); g.addColorStop(0.5, '#ffb92e'); g.addColorStop(1, '#ff6a3d');
@@ -110,6 +115,7 @@ export class TitleScene extends Scene {
     text(ctx, 'PARADE', W / 2, cy + 30, { size: 58, color: g2, lw: 12 });
     text(ctx, 'バウンスパレード', W / 2, cy + 70, { size: 14, color: '#fff' });
     ctx.restore();
+    }
     text(ctx, '跳ねろ。変われ。突破しろ。', W / 2, H * 0.72, { size: 18, color: '#fff' });
     if (Math.floor(this.t * 2) % 2 === 0) text(ctx, 'タップしてスタート', W / 2, H * 0.84, { size: 16, color: '#ffe14d' });
     text(ctx, 'v1.0', W - 24, H - 12, { size: 10, stroke: false, color: 'rgba(255,255,255,0.6)' });

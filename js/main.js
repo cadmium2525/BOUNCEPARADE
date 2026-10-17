@@ -1,5 +1,6 @@
 import { buildBallDefs, BALL_ORDER, BONUS_BALLS } from './balls.js';
 import { analyzeAtlas, Renderer } from './render.js';
+import { loadSprites } from './sprites.js';
 import { AudioManager } from './audio.js';
 import { loadSave, writeSave, defaultSave } from './save.js';
 import { STAGES, buildStage } from './stages.js';
@@ -30,7 +31,7 @@ class App {
       loadImage('assets/atlas/balls_atlas.png'),
     ]);
     this.data = { balls: buildBallDefs(ballsAtlas), rules, enemyRules, bossRules };
-    this.assets = { ballsImg, ballInfo: ballsImg ? analyzeAtlas(ballsImg, ballsAtlas) : null };
+    this.assets = { ballsImg, ballInfo: ballsImg ? analyzeAtlas(ballsImg, ballsAtlas) : null, sprites: await loadSprites('assets/sprites/manifest.json') };
     await this.audio.init('audio/manifest.json');
     this.audio.setVolume('bgm', this.save.settings.bgm);
     this.audio.setVolume('se', this.save.settings.se);

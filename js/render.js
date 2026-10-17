@@ -1,5 +1,6 @@
 import { TILE, T, ZONE_BALL } from './consts.js';
 import { ENTITY_ART, BOSS_ART, drawPlatform, drawFallRock, circ, star } from './art.js';
+import { drawEntitySprite, drawBossSprite, bgImage } from './sprites.js';
 
 export const THEMES = {
   grass: { name: 'はじまりの丘', sky: ['#5fc2ff', '#c9f1ff'], far: '#a6dcb4', mid: '#6cc35a', top: '#5cd13a', topHi: '#a8f26c', body: '#b8743a', bodyDk: '#8a5427', bodyLt: '#d08d4f', brick: ['#e0884a', '#a4521e'], oneway: '#c48a4a', deco: 'hills' },
@@ -45,7 +46,7 @@ export function drawBallSprite(ctx, assets, def, x, y, angle, sx = 1, sy = 1, al
     // 見た目の半径をコライダーへ合わせる（トゲ・炎など装飾の分だけ少し大きめ）
     const visR = def.halfLen ? inf.hw : Math.max(inf.hw, inf.hh);
     const targetR = def.halfLen ? def.halfLen + def.r : def.r;
-    const k = (targetR / visR) * (def.spriteScale || 1.08);
+    const k = (targetR / visR) * (def.spriteScale || 1.04);
     const f = inf.frame;
     ctx.drawImage(img, f.x, f.y, f.w, f.h, -inf.cx * k, -inf.cy * k, f.w * k, f.h * k);
   } else {
@@ -317,8 +318,10 @@ export class Renderer {
     ctx.fillStyle = sky; ctx.fillRect(0, 0, viewW, viewH);
     // 遠景・中景（横に繰り返す）
     for (const [layer, k, ky] of [['far', 0.18, 0.05], ['mid', 0.42, 0.12]]) {
-      const img = this.bgLayer(this.theme, layer);
-      const W = 1024;
+      const gen = bgImage(this.assets.sprites || {}, this.theme, layer);
+      if (!gen && layer === 'mid' && bgImage(this.assets.sprites || {}, this.theme, 'far')) continue; // 生成した遠景だけの時はコードの中景を重ねない
+      const img = gen || this.bgLayer(this.theme, layer);
+      const W = gen ? (gen.width / gen.height) * 360 : 1024;
       const ox = -((camX * k) % W);
       const oy = (viewH - 360) + (g.level.ph - viewH - camY) * ky;
       for (let x = ox - W; x < viewW; x += W) ctx.drawImage(img, x, oy + (layer === 'mid' ? 20 : 0), W, 360);
@@ -341,6 +344,7 @@ export class Renderer {
       if (e.x < camX - 120 || e.x > camX + viewW + 120) continue;
       if (e.type === 'platform') { drawPlatform(ctx, e, this.theme); continue; }
       if (e.type === 'fallrock') { drawFallRock(ctx, e, t, floorY || g.level.groundBelow(e.x, e.y) || 0); continue; }
+      if (this.assets.sprites && drawEntitySprite(ctx, this.assets.sprites, e, t)) continue;
       const fn = ENTITY_ART[e.type];
       if (fn) fn(ctx, e, t);
     }
@@ -349,7 +353,7 @@ export class Renderer {
       if (!(b.dead && b.deadT > 2)) {
         ctx.save();
         if (b.dead) { ctx.globalAlpha = Math.max(0, 1 - b.deadT / 2); ctx.translate((Math.random() - 0.5) * 4, 0); }
-        BOSS_ART[b.id](ctx, b, t, floorY);
+        if (!(this.assets.sprites && drawBossSprite(ctx, this.assets.sprites, b, t, floorY))) BOSS_ART[b.id](ctx, b, t, floorY);
         ctx.restore();
       }
     }

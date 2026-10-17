@@ -304,7 +304,7 @@ export function drawSpray(ctx, e, t) {
 }
 
 // ===== ボス =====
-function weak(ctx, x, y, t, r = 7) {
+export function weakMarker(ctx, x, y, t, r = 7) {
   ctx.save();
   ctx.globalAlpha = 0.6 + 0.4 * Math.sin(t * 12);
   circ(ctx, x, y, r + 4, 'rgba(255,60,90,0.35)', null);
@@ -342,9 +342,9 @@ export function drawDrillRhino(ctx, b, t) {
   ctx.restore();
   ctx.restore();
   if (b.state === 'Telegraph') { ctx.fillStyle = '#ff4040'; ctx.font = 'bold 18px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('！', b.x, b.top - 10); }
-  if (stun) { weak(ctx, b.x - b.facing * 10, b.top + 2, t, 8); stars(ctx, b.x + b.facing * 26, b.top - 4, t); }
+  if (stun) { weakMarker(ctx, b.x - b.facing * 10, b.top + 2, t, 8); stunStars(ctx, b.x + b.facing * 26, b.top - 4, t); }
 }
-function stars(ctx, x, y, t) {
+export function stunStars(ctx, x, y, t) {
   for (let i = 0; i < 3; i++) { const a = t * 5 + (i * Math.PI * 2) / 3; star(ctx, x + Math.cos(a) * 12, y + Math.sin(a) * 4, 4, '#ffe14d', OUT); }
 }
 export function drawStormCloud(ctx, b, t, floorY) {
@@ -375,7 +375,7 @@ export function drawStormCloud(ctx, b, t, floorY) {
   ctx.restore();
   // 風向き
   if (b.windWarn) { ctx.save(); ctx.globalAlpha = 0.6 + 0.4 * Math.sin(t * 20); ctx.fillStyle = '#fff'; ctx.font = 'bold 16px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(b.windDir > 0 ? '◀◀ 風' : '風 ▶▶', b.x, b.top - 16); ctx.restore(); }
-  if (tired) weak(ctx, b.x, b.top + 4, t, 8);
+  if (tired) weakMarker(ctx, b.x, b.top + 4, t, 8);
 }
 export function drawMagmaGolem(ctx, b, t) {
   ctx.save(); ctx.translate(b.x, b.y);
@@ -401,7 +401,7 @@ export function drawMagmaGolem(ctx, b, t) {
   ctx.fillStyle = cool ? '#bfe8ff' : '#ffd23f';
   ctx.fillRect(-9, -40, 6, 4); ctx.fillRect(3, -40, 6, 4);
   ctx.restore();
-  if (cool) weak(ctx, b.x, b.y - 6, t, 9);
+  if (cool) weakMarker(ctx, b.x, b.y - 6, t, 9);
   else { ctx.save(); ctx.globalAlpha = 0.25 + 0.1 * Math.sin(t * 5); circ(ctx, b.x, b.y - 6, 40, 'rgba(255,90,0,0.4)', null); ctx.restore(); }
 }
 export function drawBumperSpider(ctx, b, t) {
@@ -426,8 +426,8 @@ export function drawBumperSpider(ctx, b, t) {
   if (dizzy) { ctx.strokeStyle = OUT; ctx.lineWidth = 2; for (const ey of [-8, 4]) { ctx.beginPath(); ctx.arc(f * 14, ey, 3.5, 0, Math.PI * 1.6); ctx.stroke(); } }
   else { eye(ctx, f * 14, -8, 4.5, f, true); eye(ctx, f * 16, 4, 3.5, f, true); circ(ctx, f * 6, -14, 2.5, '#ff3a4a', OUT, 1); }
   ctx.restore();
-  weak(ctx, b.x - b.facing * 24, b.y - 4, t, 7);
-  if (dizzy) stars(ctx, b.x, b.top - 10, t);
+  weakMarker(ctx, b.x - b.facing * 24, b.y - 4, t, 7);
+  if (dizzy) stunStars(ctx, b.x, b.top - 10, t);
   if (b.state === 'Telegraph') { ctx.fillStyle = '#ff4040'; ctx.font = 'bold 18px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('！', b.x, b.top - 12); }
 }
 export function drawMoguDriller(ctx, b, t, floorY) {
@@ -467,7 +467,7 @@ export function drawMoguDriller(ctx, b, t, floorY) {
   // 爪
   for (const s of [-1, 1]) { ctx.save(); ctx.translate(s * 24, 14); for (let i = -1; i <= 1; i++) poly(ctx, [0, i * 4 - 2, s * 9, i * 5, 0, i * 4 + 2], '#eee', OUT, 1); ctx.restore(); }
   ctx.restore();
-  if (stun) { weak(ctx, b.x, b.top + 6, t, 8); stars(ctx, b.x, b.top - 8, t); }
+  if (stun) { weakMarker(ctx, b.x, b.top + 6, t, 8); stunStars(ctx, b.x, b.top - 8, t); }
   if (b.state === 'Surface' && b.armed === 0) {
     // クランプが降りてくるヒント
   }
@@ -497,7 +497,7 @@ export function drawFreezeKing(ctx, b, t) {
   ctx.strokeStyle = '#ffd23f'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-14, 6); ctx.lineTo(-20, -18 + raise); ctx.stroke();
   star(ctx, -20, -22 + raise, 6, '#bff7ff', OUT);
   ctx.restore();
-  weak(ctx, b.x - b.facing * 22, b.y + 4, t, 7);
+  weakMarker(ctx, b.x - b.facing * 22, b.y + 4, t, 7);
   if (b.state === 'Recovery') { ctx.fillStyle = '#fff'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('ふぅ…', b.x, b.top - 8); }
 }
 
