@@ -272,7 +272,7 @@ export class Player {
     // 落下
     if (this.y - d.r > level.ph + 40) g.onPit(this);
     else if (this.grounded && this.groundN && this.groundN.ny < -0.7 && this.invuln <= 0 && !this.forced) {
-      if (this.groundType !== T.SPIKE && this.groundType !== T.LAVA) this.lastSafe = { x: this.x, y: this.y };
+      if (!this.groundBox && this.game.isSafeSpot(this.x, this.y, this.def.r)) this.lastSafe = { x: this.x, y: this.y };
     }
   }
 
@@ -348,7 +348,7 @@ export class Player {
     let vn = this.vx * n.x + this.vy * n.y;
     const floor = n.y < -0.55;
     if (floor) {
-      this.groundT = 0; this.groundN = { nx: n.x, ny: n.y }; this.groundType = c.type;
+      this.groundT = 0; this.groundN = { nx: n.x, ny: n.y }; this.groundType = c.type; this.groundBox = c.box || null;
       if (c.box && c.box.carries) this.riding = c.box;
     }
     // 危険タイル

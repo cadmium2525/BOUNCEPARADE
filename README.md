@@ -92,6 +92,7 @@ node tools/test_physics.mjs    # 跳躍高さ・変身・静止からの復帰
 node tools/test_combo.mjs      # チュートリアルを自動操作でクリア（象徴コンボ）
 node tools/test_sections.mjs   # 各ステージの強制区間・発射装置を通過できるか
 GOD=1 node tools/test_bosses.mjs  # 初期 3 球だけで 6 ボスを倒せるか（簡易ボット）
+node tools/test_respawn.mjs    # 穴に落ちた後・ミスの後に必ず床の上へ戻るか
 ```
 
 開発用 URL：`?stage=factory`（ステージ直行）、`?map=factory`（ステージ全体図）、`?unlock=1`（全解放）。

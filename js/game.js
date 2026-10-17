@@ -48,6 +48,7 @@ export class Game {
     const sx = this.checkpoint ? this.checkpoint.x : start.x * TILE + TILE / 2;
     const sy = this.checkpoint ? this.checkpoint.y : start.y * TILE + TILE / 2;
     const ball = this.checkpoint?.ball && this.loadout.includes(this.checkpoint.ball) ? this.checkpoint.ball : this.loadout[0];
+    this.startPos = { x: start.x * TILE + TILE / 2, y: start.y * TILE + TILE / 2 };
     this.player = new Player(this, sx, sy, ball);
     // 床の上に置く
     const gy = this.level.groundBelow(sx, sy - 8);
@@ -193,10 +194,32 @@ export class Game {
   onDeny(kind) { this.sfx('deny'); this.emit('deny', { kind }); }
   onHurt(p) { this.sfx('hurt'); this.shake(5); this.fx.burst(p.x, p.y, 10, '#ff6b6b'); this.emit('hurt', { hp: p.hp }); }
   onPlayerDead() { this.deadT = 1.6; this.misses++; this.sfx('miss'); this.fx.burst(this.player.x, this.player.y, 30, '#fff', 260); this.emit('miss', {}); }
+  // 復帰してよい場所か：ボールの下に、壊れない固定の床が左右ともある
+  isSafeSpot(x, y, r) {
+    const L = this.level;
+    const ty = Math.floor((y + r + 2) / TILE);
+    const ok = (px) => { const t = L.tile(Math.floor(px / TILE), ty); return t === T.SOLID || t === T.BRICK || t === T.ICE || t === T.MAGNET || t === T.ONEWAY; };
+    if (!ok(x) || !ok(x - r * 0.7) || !ok(x + r * 0.7)) return false;
+    if (L.zoneAt(x, y)) return false;
+    // 近くに動くもの・危険なものが無い
+    for (const e of this.entities) {
+      if ((e.box || e.enemy || e.type === 'hazard' || e.type === 'launcher') && Math.abs(e.x - x) < 40 + (e.w || 0) / 2 && Math.abs(e.y - y) < 80) return false;
+    }
+    return true;
+  }
+  // 復帰地点：直前の安全地点。だめならチェックポイント、それもだめならスタート地点
+  safeRespawnPoint(p) {
+    const s = p.lastSafe;
+    if (s && this.isSafeSpot(s.x, s.y, p.def.r)) return { x: s.x, y: s.y - 4 };
+    const base = this.checkpoint || this.startPos;
+    const gy = this.level.groundBelow(base.x, base.y - 8);
+    return { x: base.x, y: (gy ?? base.y) - p.def.r - 1 };
+  }
   onPit(p) {
     p.hp -= 1; this.sfx('fall');
     if (p.hp <= 0) { p.dead = true; this.onPlayerDead(); return; }
-    p.x = p.px = p.lastSafe.x; p.y = p.py = p.lastSafe.y - 4; p.vx = 0; p.vy = 0;
+    const sp = this.safeRespawnPoint(p);
+    p.x = p.px = sp.x; p.y = p.py = sp.y; p.vx = 0; p.vy = 0;
     p.invuln = 1.2; p.stuck = null; p.magnetStuck = null;
     this.emit('hurt', { hp: p.hp });
     this.snapCamera();
