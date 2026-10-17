@@ -168,8 +168,27 @@ export class SelectScene extends Scene {
       rrect(ctx, c.x, c.y, c.w, c.h, 12, g, OUT, 2.5);
       ctx.fillStyle = th.top; ctx.fillRect(c.x + 2, c.y + c.h - 26, c.w - 4, 6);
       ctx.fillStyle = th.body; ctx.fillRect(c.x + 2, c.y + c.h - 20, c.w - 4, 18);
+      // 背景の絵
+      const S = this.app.assets.sprites || {};
+      const bgi = S[`bg_${st.theme}_far`];
+      if (bgi) {
+        ctx.save(); ctx.beginPath(); ctx.rect(c.x + 2, c.y + 2, c.w - 4, c.h - 28); ctx.clip();
+        const bh = c.h - 10, bw = (bgi.width / bgi.height) * bh;
+        ctx.drawImage(bgi, c.x + c.w / 2 - bw / 2, c.y + 2, bw, bh);
+        ctx.restore();
+      }
       // ボスのミニ絵
-      if (st.boss) {
+      const bossImg = st.boss && S[`boss_${st.boss}_normal`];
+      if (bossImg) {
+        ctx.save(); ctx.beginPath(); ctx.rect(c.x + 2, c.y + 2, c.w - 4, c.h - 4); ctx.clip();
+        const maxW = c.w - 24, maxH = c.h - 44;
+        const k = Math.min(maxW / bossImg.width, maxH / bossImg.height);
+        const iw = bossImg.width * k, ih = bossImg.height * k;
+        const bob = open ? Math.sin(this.t * 2 + c.x) * 1.5 : 0;
+        if (!open) ctx.filter = 'brightness(0) opacity(0.85)';
+        ctx.drawImage(bossImg, c.x + c.w / 2 - iw / 2, c.y + c.h - 24 - ih + bob, iw, ih);
+        ctx.restore();
+      } else if (st.boss) {
         ctx.save(); ctx.beginPath(); ctx.rect(c.x + 2, c.y + 2, c.w - 4, c.h - 4); ctx.clip();
         const fake = { x: c.x + c.w / 2, y: c.y + c.h - 52, w: 60, h: 60, facing: -1, state: 'Idle', flash: 0, R: 30, phase2: false, g: { player: { x: 0 } }, markX: 0, under: false, armed: 1, top: c.y + 20, t: this.t };
         ctx.translate(fake.x, fake.y); ctx.scale(0.62, 0.62); ctx.translate(-fake.x, -fake.y);
