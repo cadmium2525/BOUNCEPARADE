@@ -18,11 +18,11 @@ function run(id, tx, ty, ball, secs, policy, goal) {
   console.log(`${ok ? 'OK  ' : 'FAIL'} ${id}: ${(f / 60).toFixed(1)}s pos=(${(p.x / 16).toFixed(1)},${(p.y / 16).toFixed(1)}) ball=${p.ball} hp=${p.hp} hurts=${hurts}`);
 }
 // 工場：階段→縦穴（ボウリング強制）→床を2枚ぬく→通路
-run('factory', 84, 16, 'soccer', 20, (g, p) => ({ right: true, bounce: true, taps: p.ball === 'bowling' && !p.forced && p.y > 18 * 16 ? ['soccer'] : [] }), (g, p) => p.x > 101 * 16);
+run('factory', 84, 16, 'soccer', 20, (g, p) => ({ right: true, bounce: p.x < 96 * 16, down: p.x > 96 * 16 && p.y > 16 * 16, taps: p.ball === 'bowling' && !p.forced && p.y > 18 * 16 ? ['soccer'] : [] }), (g, p) => p.x > 101 * 16);
 // 工場：ビー玉で穴 → 発射装置×2 → 高台へ
-run('factory', 114, 19, 'soccer', 15, (g, p, f) => ({ right: p.y > 10 * 16 || p.x < 128 * 16 + 4, taps: f === 20 ? ['marble'] : p.y < 6 * 16 && p.ball === 'marble' ? ['soccer'] : [] }), (g, p) => p.x > 129 * 16 && p.y < 7 * 16);
+run('factory', 114, 19, 'soccer', 15, (g, p, f) => ({ right: p.y > 10 * 16 || p.x < 128 * 16 + 4, taps: p.ball === 'soccer' && p.x > 117 * 16 && p.y > 17 * 16 ? ['marble'] : p.y < 6 * 16 && p.ball === 'marble' ? ['soccer'] : [] }), (g, p) => p.x > 127.5 * 16 && p.y < 7 * 16);
 // 天空：シャボン玉の谷
-run('sky', 84, 7, 'soccer', 20, (g, p) => ({ right: true, bounce: p.forced ? p.y > 9 * 16 : true }), (g, p) => p.x > 111 * 16 && p.y < 14 * 16 && p.grounded);
+run('sky', 84, 7, 'soccer', 20, (g, p) => ({ right: p.x < 116 * 16, bounce: p.forced ? p.y > 9 * 16 : p.x < 88 * 16, taps: !p.forced && p.ball === 'bubble' && p.x > 110 * 16 ? ['soccer'] : [] }), (g, p) => p.x > 111 * 16 && p.y < 14 * 16 && p.grounded);
 // 天空：送風機で高い島へ
 run('sky', 26, 17, 'soccer', 12, (g, p) => ({ right: p.x < 30 * 16 + 8 || p.y < 6 * 16, bounce: true }), (g, p) => p.x > 34 * 16 && p.y < 6 * 16);
 // 火山：熱風で溶岩を渡る
@@ -32,7 +32,7 @@ run('volcano', 80, 19, 'soccer', 20, (g, p) => ({ right: true, bounce: true }), 
 // 遊園地：ラグビー区間
 run('amusement', 78, 19, 'soccer', 25, (g, p) => ({ right: true, bounce: true }), (g, p) => p.x > 112 * 16);
 // 鉱山：ビー玉トンネル → 段差で止まる
-run('mine', 44, 19, 'soccer', 10, (g, p, f) => ({ right: true, taps: f === 30 ? ['marble'] : [] }), (g, p) => p.x > 85 * 16);
+run('mine', 44, 19, 'soccer', 10, (g, p, f) => ({ right: true, taps: p.ball === 'soccer' && p.x > 46 * 16 && p.vx > 150 ? ['marble'] : [] }), (g, p) => p.x > 85 * 16);
 // 鉱山：磁気レール
 run('mine', 94, 19, 'soccer', 20, (g, p) => ({ right: true, bounce: p.x < 125 * 16 }), (g, p) => p.x > 127 * 16 && p.grounded);
 // 氷：ビー玉で氷をすべってトンネル → スライムの縦穴

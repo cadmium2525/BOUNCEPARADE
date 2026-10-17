@@ -1,5 +1,5 @@
 import { TILE, T, GRAVITY, STOMP_MIN_VY, clamp, sign } from './consts.js';
-import { circleBox, circleCircle } from './physics.js';
+import { circleBox, circleCircle, shapeFree, shapeCircles } from './physics.js';
 
 // ===== 共通 =====
 export class Entity {
@@ -94,6 +94,8 @@ export class Launcher extends Entity {
   }
   touch(p, c, g) {
     if (p.captured || p.launcherCd > 0) return;
+    // 発射装置の位置に収まらないボール（狭いトンネルの大きい球）は吸い込まない
+    if (!shapeFree(g.level, shapeCircles(this.cx, this.cy, p.def, 0), g.solidBoxes())) return;
     p.captured = this; this.holdT = 0.28; this.anim = 1;
     p.stuck = null; p.magnetStuck = null;
     g.sfx('capture');

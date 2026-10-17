@@ -381,15 +381,24 @@ export class Player {
       if (floor) {
         const base = d.bounceV * this.mult;
         const target = Math.max(base, Math.min(-vn * d.rest, d.bounceV * 1.25));
-        if (vn >= target) return;
-        this.vx += (target - vn) * n.x;
-        this.vy += (target - vn) * n.y;
+        if (-this.vy >= target) return;
+        // 自動バウンドは常に真上へ。角（斜めの法線）では横へ小さく押し出すだけにする
+        const vx0 = this.vx;
+        this.vy = -target;
+        if (Math.abs(n.x) > 0.05) {
+          this.vx += n.x * Math.min(150, target * 0.3);
+          const lim = Math.max(Math.abs(vx0), d.airMax);
+          if (Math.abs(this.vx) > lim) this.vx = Math.sign(this.vx) * lim;
+        }
         this.squash = Math.min(1, -vn / 600 + 0.35);
         g.onBounce(this, target, c);
       } else {
-        const e = n.y > 0.5 ? 0.3 : d.rest * 0.6;
+        // 天井は弱く、壁は反発係数で。上から角の斜め面に当たったときは弱く弾く
+        const e = n.y > 0.5 ? 0.3 : n.y < -0.3 ? 0.15 : d.rest * 0.6;
+        const vx0 = this.vx;
         this.vx -= (1 + e) * vn * n.x;
         this.vy -= (1 + e) * vn * n.y;
+        if (n.y < -0.3) { const lim = Math.max(Math.abs(vx0), d.airMax); if (Math.abs(this.vx) > lim) this.vx = Math.sign(this.vx) * lim; }
         if (-vn > 120) g.onWallHit(this, -vn);
       }
       return;
@@ -412,6 +421,7 @@ export class Player {
   // ラグビー球：接触点の速度と角速度を使う剛体の衝突応答
   respondCapsule(c, floor) {
     const d = this.def;
+    const vx0 = this.vx;
     const nx = c.nx, ny = c.ny;
     const rx = c.px - this.x, ry = c.py - this.y;
     const vcx = this.vx - this.av * ry, vcy = this.vy + this.av * rx;
@@ -439,6 +449,9 @@ export class Player {
     if (floor) {
       const minUp = d.bounceV * this.mult * 0.55;
       if (this.vy > -minUp) this.vy = -minUp;
+      // 回転の変換で横に飛びすぎないように
+      const lim = Math.max(Math.abs(vx0), d.airMax * 1.2);
+      if (Math.abs(this.vx) > lim) this.vx = Math.sign(this.vx) * lim;
       this.squash = 0.4;
       this.game.onBounce(this, -this.vy, c);
     } else if (-vn > 120) this.game.onWallHit(this, -vn);
