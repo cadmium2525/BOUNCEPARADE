@@ -1,5 +1,5 @@
 // オフライン対応：アプリ本体は先に保存、音声・フォントは使ったときに保存
-const CACHE = 'bounceparade-v8';
+const CACHE = 'bounceparade-v9';
 const CORE = [
   './', 'index.html', 'css/style.css', 'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png',
   'js/main.js', 'js/ui.js', 'js/game.js', 'js/player.js', 'js/physics.js', 'js/level.js', 'js/stages.js', 'js/entities.js',
@@ -15,6 +15,6 @@ self.addEventListener('fetch', (e) => {
     fetch(e.request).then((res) => {
       if (res.ok || res.type === 'opaque') { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(e.request, copy)); }
       return res;
-    }).catch(() => caches.match(e.request, { ignoreSearch: true })),
+    }).catch(() => caches.match(e.request, { ignoreSearch: true }).then((r) => r || Response.error())),
   );
 });

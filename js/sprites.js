@@ -1,16 +1,41 @@
 // 生成画像（assets/sprites/manifest.json に登録された物）で描く。無ければ false を返し、コード描画に任せる。
 import { weakMarker, stunStars } from './art.js';
 
+// 画像を1枚読む。失敗したらキャッシュを避けて最大3回まで読み直す
+function loadOne(src, tries = 3) {
+  return new Promise((res) => {
+    const attempt = (n) => {
+      const im = new Image();
+      im.onload = () => (im.decode ? im.decode().catch(() => {}) : Promise.resolve()).then(() => res(im));
+      im.onerror = () => (n + 1 < tries ? setTimeout(() => attempt(n + 1), 400 * (n + 1)) : res(null));
+      im.src = n === 0 ? src : `${src}${src.includes('?') ? '&' : '?'}retry=${Date.now()}`;
+    };
+    attempt(0);
+  });
+}
+
 export async function loadSprites(url) {
   const out = {};
   let man = {};
-  try { man = await (await fetch(url)).json(); } catch { return out; }
-  await Promise.all(Object.entries(man).map(([k, src]) => new Promise((res) => {
-    const im = new Image();
-    im.onload = () => { out[k] = im; res(); };
-    im.onerror = () => res();
-    im.src = src;
-  })));
+  for (let i = 0; i < 3 && !Object.keys(man).length; i++) {
+    try { man = await (await fetch(i ? `${url}?retry=${Date.now()}` : url, { cache: i ? 'reload' : 'default' })).json(); } catch { /* 読み直す */ }
+  }
+  const entries = Object.entries(man);
+  // 同時に読む数をしぼる（スマホの回線・メモリで失敗しにくく）
+  let next = 0;
+  const worker = async () => { while (next < entries.length) { const [k, src] = entries[next++]; const im = await loadOne(src); if (im) out[k] = im; } };
+  await Promise.all(Array.from({ length: 6 }, worker));
+  // それでも読めなかった物は、遊んでいる間に裏で読み直し、読めたら差し替わる
+  const missing = entries.filter(([k]) => !out[k]);
+  if (missing.length) {
+    console.warn('画像を読み込めませんでした（裏で再試行します）:', missing.map(([k]) => k).join(', '));
+    const retry = async (round) => {
+      for (const [k, src] of missing) if (!out[k]) { const im = await loadOne(src, 2); if (im) out[k] = im; }
+      if (missing.some(([k]) => !out[k]) && round < 10) setTimeout(() => retry(round + 1), 5000);
+    };
+    setTimeout(() => retry(0), 3000);
+  }
+  out.__missing = () => entries.filter(([k]) => !out[k]).map(([k]) => k);
   return out;
 }
 

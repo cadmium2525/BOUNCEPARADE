@@ -387,6 +387,8 @@ export class SettingsScene extends Scene {
       '【キーボード】← → / A D：向き　↑ / W / スペース：反発　↓ / S：小さく　1〜6：変身　Esc：ポーズ',
     ];
     lines.forEach((l, i) => text(ctx, l, W / 2, 180 + i * 20, { size: 11, stroke: false }));
+    const miss = this.app.assets.sprites?.__missing?.() || [];
+    if (miss.length) text(ctx, `読み込めていない画像（再試行中）：${miss.join(', ')}`, W / 2, 246, { size: 10, stroke: false, color: '#ffb0b0' });
     for (const b of this.buttons) b.draw(ctx);
   }
 }
