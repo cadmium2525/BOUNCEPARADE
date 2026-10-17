@@ -1,9 +1,9 @@
-import { STAGES, buildStage } from './stages.js';
+import { STAGES, buildStage, TOTAL_MEDALS, MEDALS_PER_STAGE, ballSource } from './stages.js';
 import { BALL_ORDER, REWARD_BALLS, BONUS_BALLS, STARTING_BALLS } from './balls.js';
 import { Game } from './game.js';
 import { Renderer, THEMES, drawBallSprite } from './render.js';
 import { BOSS_ART, heartPath, star, rrect, circ } from './art.js';
-import { writeSave } from './save.js';
+import { writeSave, heartBonus, medalCount, maxSlots } from './save.js';
 import { STEP } from './consts.js';
 
 const FONT = '"M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Hiragino Sans", "Yu Gothic", sans-serif';
@@ -156,7 +156,8 @@ export class SelectScene extends Scene {
     this.bg(ctx, 'sky');
     text(ctx, 'ステージ選択', W / 2, 24, { size: 20 });
     const bossCount = STAGES.filter((x) => x.boss && save.cleared[x.id]).length;
-    text(ctx, `ボス撃破 ${bossCount}/6`, W - 16, 24, { size: 12, align: 'right', color: '#ffe14d' });
+    text(ctx, `ボス撃破 ${bossCount}/6`, W - 16, 18, { size: 12, align: 'right', color: '#ffe14d' });
+    text(ctx, `メダル ${medalCount(save)}/${TOTAL_MEDALS}　最大ライフ ${3 + heartBonus(save)}`, W - 16, 36, { size: 11, align: 'right' });
     for (const c of this.cards) {
       const { st } = c; const th = THEMES[st.theme];
       const open = this.unlocked(st);
@@ -209,6 +210,27 @@ export class SelectScene extends Scene {
         else text(ctx, '？', c.x + c.w - 18, c.y + 43, { size: 13, color: '#888', stroke: false });
       }
       if (save.cleared[st.id]) { star(ctx, c.x + 16, c.y + 40, 10, '#ffe14d', OUT); }
+      // 集めた物：メダル ◆◆◇ ・隠しボール・ハートのうつわ
+      if (open) {
+        const by = c.y + c.h - 11;
+        for (let i = 0; i < MEDALS_PER_STAGE; i++) {
+          const got = save.collected?.[`${st.id}:medal${i + 1}`];
+          circ(ctx, c.x + 12 + i * 13, by, 5, got ? '#ffd23f' : 'rgba(0,0,0,0.4)', OUT, 1.2);
+          if (got) star(ctx, c.x + 12 + i * 13, by, 3, '#fff8c0');
+        }
+        if (st.secret) {
+          const got = save.collected?.[`${st.id}:ball`];
+          const d = data.balls[st.secret.ball];
+          ctx.save(); ctx.globalAlpha = got ? 1 : 0.35; if (!got) ctx.filter = 'brightness(0)';
+          drawBallSprite(ctx, assets, { ...d, r: 6, halfLen: d.halfLen ? 3 : 0 }, c.x + c.w - 14, by, 0);
+          ctx.restore();
+          if (st.secret.heart) {
+            const hg = save.collected?.[`${st.id}:heart`];
+            ctx.save(); ctx.translate(c.x + c.w - 30, by); heartPath(ctx, 0, 0, 5.5);
+            ctx.fillStyle = hg ? '#ff3d6b' : 'rgba(0,0,0,0.4)'; ctx.fill(); ctx.lineWidth = 1.2; ctx.strokeStyle = OUT; ctx.stroke(); ctx.restore();
+          }
+        }
+      }
       if (!open) {
         rrect(ctx, c.x, c.y, c.w, c.h, 12, 'rgba(0,0,0,0.55)', null);
         text(ctx, '🔒', c.x + c.w / 2, c.y + c.h / 2, { size: 22, stroke: false });
@@ -238,9 +260,9 @@ export class LoadoutScene extends Scene {
   constructor(app, st) { super(app); this.st = st; }
   enter() {
     const s = this.app.save;
-    this.sel = (s.loadout || []).filter((id) => s.owned.includes(id)).slice(0, 6);
+    this.sel = (s.loadout || []).filter((id) => s.owned.includes(id)).slice(0, this.app.slots);
     if (!this.sel.includes('soccer')) this.sel.unshift('soccer');
-    this.sel = this.sel.slice(0, 6);
+    this.sel = this.sel.slice(0, this.app.slots);
     this.layout();
   }
   layout() {
@@ -266,10 +288,10 @@ export class LoadoutScene extends Scene {
     const { W, H, assets, data } = this.app;
     this.bg(ctx, THEMES[this.st.theme] ? this.st.theme : 'grass');
     ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fillRect(0, 0, W, H);
-    text(ctx, `${this.st.name}：ボールを6つ選ぼう`, W / 2, 22, { size: 18 });
+    text(ctx, `${this.st.name}：ボールを${this.app.slots}つ選ぼう`, W / 2, 22, { size: 18 });
     // 選択中
-    for (let i = 0; i < 6; i++) {
-      const x = W / 2 + (i - 2.5) * 58, y = 74;
+    for (let i = 0; i < this.app.slots; i++) {
+      const x = W / 2 + (i - (this.app.slots - 1) / 2) * 58, y = 74;
       circ(ctx, x, y, 24, 'rgba(255,255,255,0.2)', '#fff', 2);
       const id = this.sel[i];
       if (id) drawBallSprite(ctx, assets, { ...data.balls[id], r: 17, halfLen: data.balls[id].halfLen ? 8 : 0 }, x, y, 0);
@@ -291,7 +313,7 @@ export class LoadoutScene extends Scene {
       if (Math.hypot(x - c.x, y - c.y) < 28) {
         if (c.id === 'soccer') { this.app.audio.play('deny'); return; }
         if (this.sel.includes(c.id)) this.sel = this.sel.filter((s) => s !== c.id);
-        else if (this.sel.length < 6) this.sel.push(c.id);
+        else if (this.sel.length < this.app.slots) this.sel.push(c.id);
         else { this.app.audio.play('deny'); return; }
         this.app.audio.play('ui');
       }
@@ -337,7 +359,9 @@ export class CollectionScene extends Scene {
         const kind = { bounce: '反発', roll: '非反発', float: 'ふわふわ', stick: '吸着' }[d.kind];
         text(ctx, `タイプ：${kind}　半径：${d.r}　反発係数：${d.rest}`, 210, py + 46 + lines.length * 17 + 4, { size: 10, align: 'left', stroke: false, color: '#aee' });
       } else {
-        const how = STARTING_BALLS.includes(id) ? '' : REWARD_BALLS.includes(id) ? `${STAGES.find((s) => s.reward === id).name}のボスを倒すと手に入る` : 'パレードタワーをクリアすると手に入る';
+        const src = ballSource(id);
+        const keyNames = (src?.stage.secret?.key || []).map((k) => data.balls[k].name).join('と');
+        const how = !src ? '' : src.secret ? `${src.stage.name}の隠しルートにある（${keyNames}が必要）` : src.stage.id === 'final' ? 'パレードタワーをクリアすると手に入る' : `${src.stage.name}のボスを倒すと手に入る`;
         text(ctx, '？？？', 150, py + 24, { size: 16, align: 'left' });
         text(ctx, how, 150, py + 50, { size: 12, align: 'left', stroke: false });
       }
@@ -402,6 +426,7 @@ export class PlayScene extends Scene {
     this.events = [];
     this.game = new Game({
       stage: this.st, data: app.data, loadout: this.loadout, viewW: app.W, viewH: app.H,
+      collected: app.save.collected, hpBonus: heartBonus(app.save), owned: app.save.owned,
       sfx: (n, o) => app.audio.play(n, o),
       onEvent: (type, p) => this.onEvent(type, p),
     });
@@ -419,9 +444,10 @@ export class PlayScene extends Scene {
   layout() {
     const { W, H } = this.app;
     this.pad = { x: 82, y: H - 82, r: 64 };
+    const per = this.loadout.length > 6 ? 4 : 3;
     this.ballBtns = this.loadout.map((id, i) => {
-      const col = i % 3, row = Math.floor(i / 3);
-      return { id, x: W - 40 - (2 - col) * 56, y: H - 96 + row * 56, r: 25 };
+      const col = i % per, row = Math.floor(i / per);
+      return { id, x: W - 40 - (per - 1 - col) * 56, y: H - 96 + row * 56, r: 25 };
     });
     // 6 個未満のときは下段から詰める
     if (this.loadout.length <= 3) this.ballBtns.forEach((b, i) => { b.x = W - 40 - (this.loadout.length - 1 - i) * 56; b.y = H - 44; });
@@ -449,7 +475,24 @@ export class PlayScene extends Scene {
     if (type === 'respawn') { this.renderer.setLevel(g.level, this.st.theme); this.app.audio.bgm(this.st.bgm); this.app.audio.bgmName = this.st.bgm; }
     if (type === 'deny') this.btnShake = 0.3;
     if (type === 'forced') this.forcedT = 0;
+    if (type === 'collect') this.onCollect(p);
   }
+  onCollect(p) {
+    const app = this.app, s = app.save, d = app.data.balls;
+    s.collected[p.id] = true; // 拾ったその場で保存（途中でやめても残る）
+    if (p.kind === 'ball') {
+      if (!s.owned.includes(p.ball)) s.owned.push(p.ball);
+      this.banner = { text: `${d[p.ball].name} を手に入れた！`, sub: '隠しボール', t: 2.6, ball: p.ball };
+    } else if (p.kind === 'heart') {
+      this.banner = { text: '最大ライフ +1', sub: 'ハートのうつわ', t: 2.4 };
+    } else {
+      const got = this.stageMedals().filter(Boolean).length;
+      const all = medalCount(s);
+      this.banner = { text: `メダル ${got}/${MEDALS_PER_STAGE}`, sub: all >= TOTAL_MEDALS ? '全メダル達成！ 装備枠が7つに' : `ぜんぶで ${all}/${TOTAL_MEDALS}`, t: 2 };
+    }
+    writeSave(s);
+  }
+  stageMedals() { return Array.from({ length: MEDALS_PER_STAGE }, (_, i) => !!this.app.save.collected[`${this.st.id}:medal${i + 1}`]); }
   update(dt) {
     super.update(dt);
     if (this.paused) return;
@@ -499,6 +542,7 @@ export class PlayScene extends Scene {
     circ(ctx, 16, 42, 6, '#ffd23f', '#8a5a00', 1.5);
     text(ctx, `× ${g.coins}`, 28, 43, { size: 13, align: 'left' });
     text(ctx, `SCORE ${g.score}`, 18 + p.maxHp * 22 + 6, 19, { size: 11, align: 'left', color: '#ffe9a8' });
+    this.stageMedals().forEach((got, i) => { const mx = 80 + i * 15; circ(ctx, mx, 42, 5.5, got ? '#ffd23f' : 'rgba(0,0,0,0.35)', OUT, 1.5); if (got) star(ctx, mx, 42, 3.2, '#fff8c0'); });
     // ボス HP
     if (g.boss && g.bossStarted && !g.cleared) {
       const b = g.boss; const bw = Math.min(260, W * 0.36), bx = W / 2 - bw / 2;
@@ -525,9 +569,11 @@ export class PlayScene extends Scene {
     }
     // バナー
     if (this.banner) {
-      const b = this.banner; const a = Math.min(1, b.t * 2, (2.2 - b.t) * 4 + 0.2);
+      const b = this.banner; b.max = b.max || b.t;
+      const a = Math.min(1, b.t * 2, (b.max - b.t) * 4 + 0.2);
       ctx.save(); ctx.globalAlpha = Math.max(0, a);
       if (b.boss) { ctx.fillStyle = 'rgba(120,0,30,0.6)'; ctx.fillRect(0, H * 0.4 - 30, W, 60); }
+      if (b.ball) { const d = this.app.data.balls[b.ball]; drawBallSprite(ctx, assets, { ...d, r: 20, halfLen: d.halfLen ? 10 : 0 }, W / 2, H * 0.4 - 48, this.t * 2); }
       text(ctx, b.sub, W / 2, H * 0.4 - 14, { size: 14, color: b.boss ? '#ffcf3f' : '#fff' });
       text(ctx, b.text, W / 2, H * 0.4 + 10, { size: 26 });
       ctx.restore();
@@ -681,11 +727,11 @@ export class EndingScene extends Scene {
     ctx.globalAlpha = 1;
     text(ctx, 'CONGRATULATIONS!', W / 2, 40, { size: 30, color: '#ffe14d' });
     text(ctx, 'パレードタワーを突破した！', W / 2, 74, { size: 16 });
-    text(ctx, '追加ボール 9 種が図鑑に加わった', W / 2, 98, { size: 13, color: '#7dffb0' });
-    BONUS_BALLS.forEach((id, i) => {
-      const x = W / 2 + (i - 4) * 52, y = 150 + Math.sin(this.t * 3 + i) * 8;
-      drawBallSprite(ctx, assets, { ...data.balls[id], r: 18, halfLen: data.balls[id].halfLen ? 8 : 0 }, x, y, this.t * (i % 2 ? 1 : -1));
-    });
+    text(ctx, 'トゲ鉄球を手に入れた！', W / 2, 98, { size: 13, color: '#7dffb0' });
+    drawBallSprite(ctx, assets, { ...data.balls.spike, r: 26 }, W / 2, 150 + Math.sin(this.t * 3) * 6, this.t);
+    const save = this.app.save;
+    const found = BONUS_BALLS.filter((id) => id !== 'spike' && save.owned.includes(id)).length;
+    text(ctx, `隠しボール ${found}/8　メダル ${medalCount(save)}/${TOTAL_MEDALS}　— 手に入れたボールで、前のステージの隠しルートを探してみよう`, W / 2, 196, { size: 11, stroke: false });
     text(ctx, 'BOUNCE PARADE — 企画・開発キット v1.0 / BGM・効果音：かなでる', W / 2, H - 82, { size: 10, stroke: false, color: '#ddd' });
     for (const b of this.buttons) b.draw(ctx);
   }

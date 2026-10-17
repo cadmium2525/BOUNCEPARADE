@@ -1,5 +1,5 @@
 import { Builder } from './level.js';
-import { Sign, Platform } from './entities.js';
+import { Sign, Platform, Pickup, KeyHint } from './entities.js';
 import { TILE } from './consts.js';
 
 // ステージは高さ 26 タイル。地面の上端は基本 21 行目。
@@ -14,6 +14,13 @@ function sign(b, x, y, text) { b.add({ ch: 'sign', x, y, make: () => new Sign(x 
 function plat(b, x, y, axis, range, speed, w = 3, phase = 0) {
   b.add({ ch: 'plat', x, y, make: () => new Platform(x * TILE + 8, y * TILE + 8, axis, range, speed, w, phase) });
 }
+// 隠しルートの拾い物（id は保存用）
+const at = (v) => v * TILE + TILE / 2;
+function pickBall(b, sid, x, y, ball) { b.add({ ch: 'pick', x, y, make: () => new Pickup(at(x), at(y), 'ball', `${sid}:ball`, ball) }); }
+function heartUp(b, sid, x, y) { b.add({ ch: 'pick', x, y, make: () => new Pickup(at(x), at(y), 'heart', `${sid}:heart`) }); }
+function medal(b, sid, n, x, y) { b.add({ ch: 'pick', x, y, make: () => new Pickup(at(x), at(y), 'medal', `${sid}:medal${n}`) }); }
+function hint(b, x, y, ball) { b.add({ ch: 'hint', x, y, make: () => new KeyHint(at(x), at(y), ball) }); }
+
 // ボス部屋：ゲート列 gx、右端 x1、天井 0..ceil、床の上端 floor
 function arena(b, gx, x1, floor, ceil = 4, floorCh = '#') {
   b.fill(gx, 0, x1, ceil, '#');
@@ -61,6 +68,13 @@ function tutorial() {
   arc(b, 155, 171, 14, 3);
   b.set(182, 17, 'G');
   b.fill(191, 0, 192, H - 1, '#');
+  // メダル・隠しルート（シャボン玉で空高くの雲の島へ）
+  medal(b, 'tutorial', 1, 85, 17);
+  medal(b, 'tutorial', 2, 76, 5);
+  b.row(170, 176, 3, '=');
+  pickBall(b, 'tutorial', 172, 2, 'baseball');
+  medal(b, 'tutorial', 3, 175, 2);
+  hint(b, 173, 5, 'bubble');
   return b;
 }
 
@@ -81,6 +95,17 @@ function factory() {
   // B: プレス機の通路
   b.ground(40, 79, 21);
   b.fill(40, 0, 79, 7, '#');
+  // 隠しルート：天井裏の磁気レール通路（下はトゲ。磁石ボールでレールを伝う）
+  b.set(21, 17, 'S');
+  b.row(22, 39, 1, '#');
+  b.row(22, 78, 2, 'M');
+  b.clear(40, 3, 78, 5);
+  b.row(40, 72, 6, '^');
+  b.clear(77, 6, 77, 7); // 出口：ビー玉だけ通れる穴からプレス通路へ
+  hint(b, 30, 5, 'magnet');
+  pickBall(b, 'factory', 75, 4, 'tennis');
+  heartUp(b, 'factory', 73, 4);
+  medal(b, 'factory', 3, 77, 4);
   b.set(47, 8, 'T'); b.set(57, 8, 'T'); b.set(67, 8, 'T');
   coins(b, 44, 76, 19);
   b.set(52, 20, 'k'); b.set(72, 20, 'k');
@@ -129,6 +154,8 @@ function factory() {
   b.set(183, 20, 'n');
   b.set(193, 20, 'K');
   b.set(196, 20, 'h');
+  medal(b, 'factory', 1, 131, 5);
+  medal(b, 'factory', 2, 141, 3);
   // F: ボス部屋
   arena(b, 206, 247, 21);
   b.set(238, 20, '@');
@@ -179,12 +206,24 @@ function sky() {
   plat(b, 168, 16, 'x', 4, 1.2);
   coins(b, 163, 173, 13);
   b.ground(176, 205, 18);
-  b.set(184, 17, 'g');
+  b.set(196, 17, 'g');
   b.set(190, 17, 'p');
+  // 隠しルート：スライム球でよじ登る煙突。上から下向きの風
+  b.fill(176, 0, 188, 0, '#');
+  b.fill(176, 1, 177, 17, '#');
+  b.fill(183, 6, 184, 14, '#');
+  b.row(185, 187, 6, '#');
+  b.fill(188, 1, 188, 6, '#');
+  b.set(180, 1, 'v');
+  hint(b, 185, 13, 'slime');
+  pickBall(b, 'sky', 186, 4, 'dandelion');
+  medal(b, 'sky', 3, 184, 4);
   b.fill(193, 10, 198, 12, '#');
   coins(b, 193, 198, 8);
   b.set(201, 17, 'K');
   b.set(203, 17, 'h');
+  medal(b, 'sky', 1, 135, 7);
+  medal(b, 'sky', 2, 195, 6);
   // ボス部屋
   arena(b, 206, 245, 18, 2);
   b.set(211, 17, 'S'); b.set(240, 17, 'S');
@@ -234,7 +273,9 @@ function volcano() {
   b.fill(140, 16, 140, 20, 'B');
   b.fill(152, 16, 152, 20, 'B');
   coins(b, 142, 150, 19);
-  b.set(146, 20, 'h');
+  pickBall(b, 'volcano', 145, 19, 'glass');
+  medal(b, 'volcano', 3, 149, 19);
+  hint(b, 138, 14, 'fire');
   sign(b, 137, 20, '冷えた岩は火の玉で溶かせる');
   b.row(156, 160, 16, '=');
   b.set(158, 12, 'd');
@@ -245,6 +286,8 @@ function volcano() {
   b.set(189, 20, 'g');
   b.set(196, 20, 'K');
   b.set(199, 20, 'h');
+  medal(b, 'volcano', 1, 97, 8);
+  medal(b, 'volcano', 2, 131, 6);
   // ボス部屋
   arena(b, 206, 245, 21);
   b.row(207, 210, 16, '='); b.set(208, 15, 'x');
@@ -288,12 +331,21 @@ function amusement() {
   coins(b, 124, 154, 11, 3);
   b.ground(157, 205, 21);
   b.set(163, 20, 'k'); b.set(168, 20, 'g');
-  b.set(173, 14, 'O'); b.set(178, 11, 'O');
+  b.set(178, 11, 'O');
+  // 隠しルート：屋根が重量床の小部屋。高いところからボウリング球で落ちて割る
+  b.fill(169, 15, 177, 16, 'H');
+  b.fill(169, 17, 169, 20, '#'); b.fill(177, 17, 177, 20, '#');
+  hint(b, 173, 12, 'bowling');
+  pickBall(b, 'amusement', 172, 19, 'beach');
+  heartUp(b, 'amusement', 174, 19);
+  medal(b, 'amusement', 3, 176, 19);
   b.row(180, 186, 13, '=');
   coins(b, 180, 186, 11);
   b.set(190, 20, 'p');
   b.set(197, 20, 'K');
   b.set(200, 20, 'h');
+  medal(b, 'amusement', 1, 19, 6);
+  medal(b, 'amusement', 2, 183, 9);
   // ボス部屋
   arena(b, 206, 245, 21);
   b.set(209, 15, 'O'); b.set(242, 15, 'O'); b.set(209, 10, 'O'); b.set(242, 10, 'O');
@@ -348,8 +400,11 @@ function mine() {
   b.fill(180, 14, 188, 15, '#');
   b.fill(180, 16, 180, 20, 'D');
   b.fill(188, 16, 188, 20, '#');
-  coins(b, 182, 186, 19, 1);
-  b.set(184, 17, 'h');
+  pickBall(b, 'mine', 185, 18, 'golf');
+  medal(b, 'mine', 3, 182, 18);
+  hint(b, 174, 13, 'bowling');
+  medal(b, 'mine', 1, 66, 20);
+  medal(b, 'mine', 2, 149, 10);
   b.set(192, 20, 'k');
   b.set(197, 20, 'K');
   b.set(200, 20, 'h');
@@ -401,7 +456,11 @@ function ice() {
   b.fill(150, 14, 150, 20, 'B');
   b.fill(160, 14, 160, 20, 'B');
   coins(b, 152, 158, 19);
-  b.set(155, 20, 'h');
+  pickBall(b, 'ice', 155, 18, 'basketball');
+  medal(b, 'ice', 3, 157, 18);
+  hint(b, 148, 11, 'fire');
+  medal(b, 'ice', 1, 100, 3);
+  medal(b, 'ice', 2, 179, 9);
   sign(b, 147, 20, '氷のブロックは火の玉で溶かせる');
   b.set(166, 20, 'n');
   b.ground(170, 176, 17);
@@ -489,20 +548,30 @@ function finale() {
   b.set(340, 20, 'n'); b.set(348, 20, 'k'); b.set(352, 20, 'g'); b.set(358, 14, 'd');
   b.set(345, 14, 'O'); b.set(355, 11, 'O');
   arc(b, 360, 372, 14, 5);
+  // 隠しルート：重量床の屋根（ボウリング）→ 中の氷の壁（火の玉）
+  b.fill(361, 15, 373, 16, 'H');
+  b.fill(361, 17, 361, 20, '#'); b.fill(373, 17, 373, 20, '#');
+  b.fill(367, 17, 367, 20, 'B');
+  hint(b, 364, 12, 'bowling'); hint(b, 370, 12, 'fire');
+  pickBall(b, 'final', 370, 19, 'volleyball');
+  heartUp(b, 'final', 372, 19);
+  medal(b, 'final', 3, 369, 18);
+  medal(b, 'final', 1, 115, 4);
+  medal(b, 'final', 2, 301, 3);
   b.set(375, 20, 'G');
   b.fill(381, 0, 382, H - 1, '#');
   return b;
 }
 
 export const STAGES = [
-  { id: 'tutorial', name: 'はじまりの丘', theme: 'grass', bgm: 'grass', build: tutorial, trial: ['bowling'], desc: 'ジャンプ → ビー玉 → 発射装置 → ボウリング球 → 壁破壊を体験' },
-  { id: 'factory', name: '工場', theme: 'factory', bgm: 'factory', build: factory, boss: 'drill_rhino', reward: 'bowling', desc: 'プレス機・重量床・発射装置' },
-  { id: 'sky', name: '天空都市', theme: 'sky', bgm: 'sky', build: sky, boss: 'storm_cloud', reward: 'bubble', desc: '送風機・動く床・雲の足場' },
-  { id: 'volcano', name: '火山', theme: 'volcano', bgm: 'volcano', build: volcano, boss: 'magma_golem', reward: 'fire', desc: '溶岩・熱風・冷却装置' },
-  { id: 'amusement', name: '遊園地', theme: 'amusement', bgm: 'amusement', build: amusement, boss: 'bumper_spider', reward: 'rugby', desc: 'バンパー・バネ・反射角' },
-  { id: 'mine', name: '地下鉱山', theme: 'mine', bgm: 'mine', build: mine, boss: 'mogu_driller', reward: 'magnet', desc: '磁気レール・発射装置・スイッチ' },
-  { id: 'ice', name: '氷雪城', theme: 'ice', bgm: 'ice', build: ice, boss: 'freeze_king', reward: 'slime', desc: '氷の床・吸着・凍結' },
-  { id: 'final', name: 'パレードタワー', theme: 'final', bgm: 'final', build: finale, desc: 'すべての能力を組み合わせる最終ステージ' },
+  { id: 'tutorial', name: 'はじまりの丘', theme: 'grass', bgm: 'grass', build: tutorial, trial: ['bowling'], secret: { key: ['bubble'], ball: 'baseball' }, desc: 'ジャンプ → ビー玉 → 発射装置 → ボウリング球 → 壁破壊を体験' },
+  { id: 'factory', name: '工場', theme: 'factory', bgm: 'factory', build: factory, secret: { key: ['magnet'], ball: 'tennis', heart: true }, boss: 'drill_rhino', reward: 'bowling', desc: 'プレス機・重量床・発射装置' },
+  { id: 'sky', name: '天空都市', theme: 'sky', bgm: 'sky', build: sky, secret: { key: ['slime'], ball: 'dandelion' }, boss: 'storm_cloud', reward: 'bubble', desc: '送風機・動く床・雲の足場' },
+  { id: 'volcano', name: '火山', theme: 'volcano', bgm: 'volcano', build: volcano, secret: { key: ['fire'], ball: 'glass' }, boss: 'magma_golem', reward: 'fire', desc: '溶岩・熱風・冷却装置' },
+  { id: 'amusement', name: '遊園地', theme: 'amusement', bgm: 'amusement', build: amusement, secret: { key: ['bowling'], ball: 'beach', heart: true }, boss: 'bumper_spider', reward: 'rugby', desc: 'バンパー・バネ・反射角' },
+  { id: 'mine', name: '地下鉱山', theme: 'mine', bgm: 'mine', build: mine, secret: { key: ['bowling'], ball: 'golf' }, boss: 'mogu_driller', reward: 'magnet', desc: '磁気レール・発射装置・スイッチ' },
+  { id: 'ice', name: '氷雪城', theme: 'ice', bgm: 'ice', build: ice, secret: { key: ['fire'], ball: 'basketball' }, boss: 'freeze_king', reward: 'slime', desc: '氷の床・吸着・凍結' },
+  { id: 'final', name: 'パレードタワー', theme: 'final', bgm: 'final', build: finale, reward: 'spike', secret: { key: ['bowling', 'fire'], ball: 'volleyball', heart: true }, desc: 'すべての能力を組み合わせる最終ステージ' },
 ];
 
 export function buildStage(st) {
@@ -511,4 +580,15 @@ export function buildStage(st) {
     st.built = { rows: b.toRows(), extra: b.extra, zones: b.zoneRects };
   }
   return st;
+}
+
+export const MEDALS_PER_STAGE = 3;
+export const TOTAL_MEDALS = STAGES.length * MEDALS_PER_STAGE;
+// 追加ボールがどこで手に入るか（図鑑のヒント用）
+export function ballSource(id) {
+  for (const st of STAGES) {
+    if (st.secret && st.secret.ball === id) return { stage: st, secret: true };
+    if (st.reward === id) return { stage: st, secret: false };
+  }
+  return null;
 }

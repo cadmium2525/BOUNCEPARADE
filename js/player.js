@@ -196,7 +196,7 @@ export class Player {
     if (this.stuck) {
       const s = this.stuck;
       if (input.bouncePressed) {
-        this.stuck = null; this.stickCd = 0.15;
+        this.stuck = null; this.stickCd = 0.15; this.jumpN = { nx: s.nx, ny: s.ny };
         if (s.ny < -0.5) { this.vx = dir * 180; this.vy = -560 * Math.max(this.mult, 0.85); }
         else if (s.ny > 0.5) { this.vx = dir * 120; this.vy = 120; }
         else { this.vx = s.nx * 330; this.vy = -480; }
@@ -204,7 +204,7 @@ export class Player {
       } else {
         if (Math.abs(s.nx) > 0.5) { this.vx = -s.nx * 20; this.vy = 28; }
         else if (s.ny < -0.5) { this.vx = dir * 75; this.vy = 20; }
-        else { s.t = (s.t || 0) + dt; this.vx = dir * 60; this.vy = -20; if (s.t > 1.4) { this.stuck = null; this.stickCd = 0.3; } }
+        else { s.t = (s.t || 0) + dt; this.vx = dir * 60; this.vy = -20; if (s.t > 1.4) { this.stuck = null; this.stickCd = 0.3; this.jumpN = { nx: s.nx, ny: s.ny }; } }
       }
     } else if (this.magnetStuck && input.bounce && d.magnet) {
       const s = this.magnetStuck;
@@ -367,7 +367,9 @@ export class Player {
     this._magSnd = false;
 
     // スライム：吸着（氷の上では滑る）
-    if (d.kind === 'stick' && c.type !== T.ICE && this.stickCd <= 0 && !c.box?.noStick) {
+    // 跳んだ直後は、跳んだ元の面にだけ吸着しない（別の壁にはすぐ吸着できる）
+    const sameFace = this.jumpN && n.x * this.jumpN.nx + n.y * this.jumpN.ny > 0.7;
+    if (d.kind === 'stick' && c.type !== T.ICE && (this.stickCd <= 0 || !sameFace) && !c.box?.noStick) {
       if (!this.stuck) g.onSlimeStick(this);
       this.stuck = { nx: n.x, ny: n.y };
       this.vx = 0; this.vy = 0;

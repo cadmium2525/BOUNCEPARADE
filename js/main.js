@@ -1,8 +1,9 @@
-import { buildBallDefs, BALL_ORDER, BONUS_BALLS } from './balls.js';
+import { buildBallDefs, BALL_ORDER } from './balls.js';
 import { analyzeAtlas, Renderer } from './render.js';
 import { loadSprites } from './sprites.js';
 import { AudioManager } from './audio.js';
-import { loadSave, writeSave, defaultSave } from './save.js';
+import { loadSave, writeSave, defaultSave, maxSlots } from './save.js';
+import { TOTAL_MEDALS } from './stages.js';
 import { STAGES, buildStage } from './stages.js';
 import { Game } from './game.js';
 import { ENTITY_ART, BOSS_ART } from './art.js';
@@ -66,20 +67,22 @@ class App {
     scene.enter();
   }
 
+  get slots() { return maxSlots(this.save, TOTAL_MEDALS); }
   defaultLoadout(st) {
+    const n = this.slots;
     const owned = BALL_ORDER.filter((id) => this.save.owned.includes(id));
-    let lo = owned.slice(0, 6);
-    for (const id of st.trial || []) if (!lo.includes(id) && lo.length < 6) lo.push(id);
-    for (const id of st.required || []) if (!lo.includes(id)) { if (lo.length >= 6) lo.pop(); lo.push(id); }
+    let lo = owned.slice(0, n);
+    for (const id of st.trial || []) if (!lo.includes(id) && lo.length < n) lo.push(id);
+    for (const id of st.required || []) if (!lo.includes(id)) { if (lo.length >= n) lo.pop(); lo.push(id); }
     return lo;
   }
   startStage(st) {
-    if (this.save.owned.length > 6) this.go(new LoadoutScene(this, st));
+    if (this.save.owned.length > this.slots) this.go(new LoadoutScene(this, st));
     else this.launch(st, this.defaultLoadout(st));
   }
   launch(st, loadout) {
     const lo = [...loadout];
-    for (const id of st.required || []) if (!lo.includes(id)) { if (lo.length >= 6) lo.pop(); lo.push(id); }
+    for (const id of st.required || []) if (!lo.includes(id)) { if (lo.length >= this.slots) lo.pop(); lo.push(id); }
     this.go(new PlayScene(this, st, lo));
   }
   finishStage(st, result) {
@@ -88,13 +91,8 @@ class App {
     s.cleared[st.id] = { score: Math.max(prev?.score || 0, result.score), coins: Math.max(prev?.coins || 0, result.coins), time: Math.min(prev?.time ?? 1e9, result.time) };
     let newBall = null;
     if (result.reward && !s.owned.includes(result.reward)) { s.owned.push(result.reward); newBall = result.reward; }
-    if (st.id === 'final') {
-      const fresh = BONUS_BALLS.some((id) => !s.owned.includes(id));
-      for (const id of BONUS_BALLS) if (!s.owned.includes(id)) s.owned.push(id);
-      writeSave(s);
-      if (fresh) { this.go(new EndingScene(this)); return; }
-    }
     writeSave(s);
+    if (st.id === 'final' && newBall) { this.go(new EndingScene(this)); return; } // 初回クリアはエンディング
     this.go(new ResultScene(this, st, result, newBall));
   }
   resetSave() { this.save = defaultSave(); writeSave(this.save); this.audio.play('uiBack'); }

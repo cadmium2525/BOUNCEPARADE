@@ -1,5 +1,5 @@
 import { TILE, T, ZONE_BALL } from './consts.js';
-import { ENTITY_ART, BOSS_ART, drawPlatform, drawFallRock, circ, star } from './art.js';
+import { ENTITY_ART, BOSS_ART, drawPlatform, drawFallRock, circ, star, heartPath } from './art.js';
 import { drawEntitySprite, drawBossSprite, bgImage } from './sprites.js';
 
 export const THEMES = {
@@ -354,6 +354,8 @@ export class Renderer {
       if (e.x < camX - 120 || e.x > camX + viewW + 120) continue;
       if (e.type === 'platform') { drawPlatform(ctx, e, this.theme); continue; }
       if (e.type === 'fallrock') { drawFallRock(ctx, e, t, floorY || g.level.groundBelow(e.x, e.y) || 0); continue; }
+      if (e.type === 'pickup') { this.drawPickup(ctx, g, e, t); continue; }
+      if (e.type === 'keyhint') { this.drawKeyHint(ctx, g, e, t); continue; }
       if (this.assets.sprites && drawEntitySprite(ctx, this.assets.sprites, e, t)) continue;
       const fn = ENTITY_ART[e.type];
       if (fn) fn(ctx, e, t);
@@ -391,6 +393,46 @@ export class Renderer {
     }
     ctx.globalAlpha = 1;
     if (g.flashT > 0) { ctx.setTransform(S, 0, 0, S, 0, 0); ctx.fillStyle = `rgba(255,255,230,${g.flashT * 3})`; ctx.fillRect(0, 0, viewW, viewH); }
+  }
+
+  // 隠しルートの拾い物
+  drawPickup(ctx, g, e, t) {
+    const y = e.y + Math.sin(t * 2.5 + e.phase) * 2;
+    ctx.save();
+    if (e.got) ctx.globalAlpha = 0.3;
+    if (e.kind === 'ball') {
+      const glow = ctx.createRadialGradient(e.x, y, 2, e.x, y, 22);
+      glow.addColorStop(0, 'rgba(255,255,200,0.9)'); glow.addColorStop(1, 'rgba(255,255,200,0)');
+      ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(e.x, y, 22 + Math.sin(t * 6) * 2, 0, 7); ctx.fill();
+      const d = g.balls[e.ball];
+      drawBallSprite(ctx, this.assets, { ...d, r: 10, halfLen: d.halfLen ? 6 : 0 }, e.x, y, Math.sin(t * 2) * 0.3);
+      for (let i = 0; i < 3; i++) { const a = t * 2 + (i * Math.PI * 2) / 3; star(ctx, e.x + Math.cos(a) * 16, y + Math.sin(a) * 16, 2.5, '#fff8c0'); }
+    } else if (e.kind === 'heart') {
+      const k = 1 + Math.sin(t * 5) * 0.08;
+      ctx.translate(e.x, y); ctx.scale(k, k);
+      heartPath(ctx, 0, 1, 11);
+      ctx.fillStyle = '#ff3d6b'; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = '#1b1b2e'; ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.fillRect(-1.5, -5, 3, 10); ctx.fillRect(-5, -1.5, 10, 3);
+    } else {
+      const sx = Math.max(0.2, Math.abs(Math.cos(t * 2.4 + e.phase)));
+      ctx.translate(e.x, y); ctx.scale(sx, 1);
+      circ(ctx, 0, 0, 7.5, '#ffd23f', '#8a5a00', 1.5);
+      circ(ctx, 0, 0, 5, '#ffb703', null);
+      star(ctx, 0, 0, 4, '#fff8c0');
+    }
+    ctx.restore();
+  }
+  // 隠し扉の目印：必要なボールを半透明で
+  drawKeyHint(ctx, g, e, t) {
+    const d = g.balls[e.ball];
+    const owned = (g.opts.owned || []).includes(e.ball);
+    const near = Math.hypot(g.player.x - e.x, g.player.y - e.y) < 140;
+    ctx.save();
+    ctx.globalAlpha = (owned ? 0.55 : 0.32) + (near ? 0.15 : 0) + Math.sin(t * 3) * 0.08;
+    ctx.setLineDash([3, 3]); ctx.lineWidth = 1.5; ctx.strokeStyle = owned ? '#ffe14d' : '#ffffff';
+    ctx.beginPath(); ctx.arc(e.x, e.y, 13, 0, 7); ctx.stroke(); ctx.setLineDash([]);
+    drawBallSprite(ctx, this.assets, { ...d, r: 9, halfLen: d.halfLen ? 5 : 0 }, e.x, e.y, 0);
+    ctx.restore();
   }
 
   drawDynamicTiles(g, camX, camY, viewW, viewH, t) {

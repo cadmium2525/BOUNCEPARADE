@@ -18,6 +18,7 @@ export class Game {
     this.viewW = opts.viewW || 640;
     this.viewH = opts.viewH || 360;
     this.coinsTaken = new Set();
+    this.collected = opts.collected || {};
     this.coins = 0; this.score = 0; this.time = 0; this.misses = 0;
     this.checkpoint = null;
     this.fx = new FX();
@@ -41,6 +42,10 @@ export class Game {
       if (s.ch === 'C' && this.coinsTaken.has(`${s.x},${s.y}`)) continue;
       const e = s.make ? s.make(this.level) : spawnFromChar(s, this.level);
       if (!e) continue;
+      if (e.type === 'pickup' && this.collected[e.id]) {
+        if (e.kind !== 'medal') continue; // 取ったボール・ハートのうつわは出さない
+        e.got = true;                     // 取ったメダルは半透明で残す
+      }
       e.key = `${s.x},${s.y}`;
       if (e.type === 'checkpoint' && this.checkpoint && this.checkpoint.key === e.key) e.on = true;
       this.entities.push(e);
@@ -50,6 +55,8 @@ export class Game {
     const ball = this.checkpoint?.ball && this.loadout.includes(this.checkpoint.ball) ? this.checkpoint.ball : this.loadout[0];
     this.startPos = { x: start.x * TILE + TILE / 2, y: start.y * TILE + TILE / 2 };
     this.player = new Player(this, sx, sy, ball);
+    this.player.maxHp += this.opts.hpBonus || 0;
+    this.player.hp = this.player.maxHp;
     // 床の上に置く
     const gy = this.level.groundBelow(sx, sy - 8);
     if (gy != null) this.player.y = this.player.py = gy - this.player.def.r - 1;
@@ -254,6 +261,18 @@ export class Game {
     this.addScore(how === 'stomp' ? 100 : 200, e.x, e.top);
     if (how !== 'stomp') this.shake(3);
   }
+  // 隠しルートの拾い物
+  collectItem(e) {
+    e.got = true;
+    if (e.kind !== 'medal') e.alive = false;
+    this.collected[e.id] = true;
+    const p = this.player;
+    if (e.kind === 'heart') { p.maxHp++; p.hp = p.maxHp; }
+    this.sfx(e.kind === 'medal' ? 'item' : 'reward');
+    this.fx.burst(e.x, e.y, 24, e.kind === 'medal' ? '#ffe14d' : e.kind === 'heart' ? '#ff6b8a' : '#fff', 220);
+    this.addScore(e.kind === 'medal' ? 500 : 1000, e.x, e.y - 20);
+    this.emit('collect', { kind: e.kind, id: e.id, ball: e.ball });
+  }
   collectCoin(c) { this.coins++; this.coinsTaken.add(c.key); this.score += 10; this.sfx('coin', { rate: 1 + (this.coins % 5) * 0.03 }); this.fx.burst(c.x, c.y, 5, '#ffe14d', 90, { g: 0, up: 0 }); }
   addScore(n, x, y) { this.score += n; if (x !== undefined) this.fx.text(x, y, String(n), '#fff'); }
   setCheckpoint(cp) {
@@ -265,7 +284,7 @@ export class Game {
   reachGoal() {
     if (this.cleared) return;
     this.cleared = true;
-    this.result = { coins: this.coins, time: this.time, score: this.score, reward: null, boss: false };
+    this.result = { coins: this.coins, time: this.time, score: this.score, reward: this.stage.reward || null, boss: false };
     this.sfx('goal');
     this.emit('clear', this.result);
   }

@@ -150,10 +150,10 @@ export function drawFan(ctx, e, t) {
   ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5;
   for (let i = 0; i < 7; i++) {
     const ph = ((t * 1.6 + i / 7) % 1);
-    if (e.dir === 'u') {
+    if (e.dir === 'u' || e.dir === 'v') {
       const x = a.x + 6 + ((i * 7) % (a.w - 12));
-      const y = a.y + a.h * (1 - ph);
-      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y - 10); ctx.stroke();
+      const y = e.dir === 'u' ? a.y + a.h * (1 - ph) : a.y + a.h * ph;
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + (e.dir === 'u' ? -10 : 10)); ctx.stroke();
     } else {
       const s = e.dir === 'r' ? 1 : -1;
       const y = a.y + 6 + ((i * 7) % (a.h - 12));
@@ -163,7 +163,7 @@ export function drawFan(ctx, e, t) {
   }
   ctx.restore();
   ctx.save(); ctx.translate(e.x, e.y);
-  if (e.dir === 'r') ctx.rotate(Math.PI / 2); else if (e.dir === 'l') ctx.rotate(-Math.PI / 2);
+  if (e.dir === 'r') ctx.rotate(Math.PI / 2); else if (e.dir === 'l') ctx.rotate(-Math.PI / 2); else if (e.dir === 'v') ctx.rotate(Math.PI);
   rrect(ctx, -12, -2, 24, 10, 3, '#5f6880', OUT, 1.5);
   ctx.save(); ctx.beginPath(); ctx.rect(-11, -8, 22, 7); ctx.clip();
   for (let i = 0; i < 4; i++) { const x = ((t * 60 + i * 6) % 24) - 12; ctx.fillStyle = i % 2 ? '#c6ccdb' : '#9aa3b8'; ctx.fillRect(x, -7, 4, 6); }

@@ -46,6 +46,20 @@ export class Sign extends Entity {
   constructor(x, y, text) { super(x, y); this.type = 'sign'; this.text = text; this.w = 16; this.h = 16; this.y = (Math.floor(y / TILE) + 1) * TILE - 10; }
 }
 
+// 隠しルートの拾い物：追加ボール / ハートのうつわ / メダル。id は保存用（例 'factory:medal2'）
+export class Pickup extends Entity {
+  constructor(x, y, kind, id, ball = null) {
+    super(x, y); this.type = 'pickup'; this.kind = kind; this.id = id; this.ball = ball;
+    this.w = kind === 'medal' ? 14 : 22; this.h = this.w; this.got = false; this.phase = Math.random() * 6;
+  }
+  touch(p, c, g) { if (this.got) return; g.collectItem(this); }
+}
+
+// 隠し扉の目印：必要なボールを半透明で表示する
+export class KeyHint extends Entity {
+  constructor(x, y, ball) { super(x, y); this.type = 'keyhint'; this.ball = ball; }
+}
+
 // ===== ギミック =====
 export class Spring extends Entity {
   constructor(x, y, level) {
@@ -130,6 +144,11 @@ export class Fan extends Entity {
       let len = 0; while (len < 14 && !level.solidAt(tx, ty - 1 - len)) len++;
       this.area = { x: (tx - 1) * TILE, y: (ty - len) * TILE, w: 3 * TILE, h: len * TILE };
       this.fx = 0; this.fy = -2600;
+    } else if (dir === 'v') {
+      // 天井から下へ吹く（シャボン玉などの軽い球を押し戻す）
+      let len = 0; while (len < 18 && !level.solidAt(tx, ty + 1 + len)) len++;
+      this.area = { x: (tx - 1) * TILE, y: (ty + 1) * TILE, w: 3 * TILE, h: len * TILE };
+      this.fx = 0; this.fy = 1100;
     } else {
       const s = dir === 'r' ? 1 : -1;
       let len = 0; while (len < 16 && !level.solidAt(tx + s * (1 + len), ty)) len++;
@@ -142,7 +161,7 @@ export class Fan extends Entity {
     if (!this.on) return null;
     const a = this.area;
     if (px < a.x || px > a.x + a.w || py < a.y || py > a.y + a.h) return null;
-    const dist = this.dir === 'u' ? (this.y - py) / (a.h + 8) : Math.abs(px - this.x) / (a.w + 8);
+    const dist = this.dir === 'u' ? (this.y - py) / (a.h + 8) : this.dir === 'v' ? (py - this.y) / (a.h + 8) : Math.abs(px - this.x) / (a.w + 8);
     const k = 1 - clamp(dist, 0, 1) * 0.4;
     return { x: this.fx * k, y: this.fy * k };
   }
@@ -410,7 +429,7 @@ export function spawnFromChar(s, level) {
     case '>': case '<': case 'A': return new Launcher(x, y, s.ch);
     case 'x': return new Switch(x, y, false);
     case 'X': return new Switch(x, y, true);
-    case 'u': case 'r': case 'l': return new Fan(x, y, s.ch, level);
+    case 'u': case 'r': case 'l': case 'v': return new Fan(x, y, s.ch, level);
     case 'T': return new Press(x, y, level);
     case 'Z': return new Platform(x, y, 'x', 4, 1.1);
     case 'z': return new Platform(x, y, 'y', 3, 1.2);
