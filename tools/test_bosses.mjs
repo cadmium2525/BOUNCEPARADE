@@ -25,7 +25,8 @@ for (const st0 of STAGES.filter((s) => s.boss && (!only || s.id === only))) {
           tx = sw ? sw.x + (p.y > sw.y + 10 ? (sw.x < (A.x0 + A.x1) / 2 ? 70 : -70) : 0) : (b.x < (A.x0 + A.x1) / 2 ? A.x1 - 60 : A.x0 + 60);
         } else if (b.id === 'mogu_driller' && b.state !== 'Vulnerable') {
           const sw = g.entities.filter((e) => e.type === 'switch' && !e.pressed).sort((a, c) => Math.abs(a.x - p.x) - Math.abs(c.x - p.x))[0];
-          tx = b.state === 'Surface' && sw ? sw.x : (sw ? sw.x + (sw.x < b.x ? 30 : -30) : p.x);
+          const side = sw && p.y > sw.y + 10 ? (sw.x < (A.x0 + A.x1) / 2 ? 70 : -70) : 0;
+          tx = b.state === 'Surface' && sw ? sw.x + side : (sw ? sw.x + (sw.x < b.x ? 30 : -30) + side : p.x);
         } else if (b.id === 'bumper_spider' || b.id === 'freeze_king') {
           tx = b.x - b.facing * 60;
           if (Math.abs(p.x - tx) > 40 && Math.sign(p.x - b.x) === b.facing) inp.bounce = true;
