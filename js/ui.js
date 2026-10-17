@@ -93,6 +93,8 @@ export class TitleScene extends Scene {
   draw(ctx) {
     const { W, H, assets, data } = this.app;
     this.bg(ctx, 'grass');
+    const bgi = this.app.assets.sprites?.bg_grass_far;
+    if (bgi) { const bw = (bgi.width / bgi.height) * H, ox = -((this.t * 12) % bw); for (let x = ox; x < W; x += bw) ctx.drawImage(bgi, x, 0, bw, H); }
     // 丘
     ctx.fillStyle = '#7ccf6a'; ctx.beginPath(); ctx.moveTo(0, H);
     for (let x = 0; x <= W; x += 10) ctx.lineTo(x, H - 50 - Math.sin(x / 90 + this.t * 0.2) * 12);
@@ -103,8 +105,11 @@ export class TitleScene extends Scene {
     const cy = H * 0.34 + Math.sin(this.t * 2) * 4;
     const logo = this.app.assets.sprites?.logo;
     if (logo) {
-      const lh = 150, lw = (logo.width / logo.height) * lh;
-      ctx.drawImage(logo, W / 2 - lw / 2, cy - lh / 2 - 6, lw, lh);
+      const pop = Math.min(1, this.t * 3), sq = 1 + Math.sin(this.t * 4) * 0.015;
+      const lh = 176 * (0.6 + 0.4 * pop) * sq, lw = (logo.width / logo.height) * lh / sq / sq;
+      ctx.globalAlpha = pop;
+      ctx.drawImage(logo, W / 2 - lw / 2, cy - lh / 2 - 4, lw, lh);
+      ctx.globalAlpha = 1;
     } else {
     ctx.save();
     const g = ctx.createLinearGradient(0, cy - 40, 0, cy + 40);

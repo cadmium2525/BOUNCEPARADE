@@ -36,5 +36,6 @@
  "boss_mogu_driller_normal": "assets/sprites/boss_mogu_driller_normal.png",
  "boss_mogu_driller_weak": "assets/sprites/boss_mogu_driller_weak.png",
  "boss_freeze_king_normal": "assets/sprites/boss_freeze_king_normal.png",
- "boss_freeze_king_weak": "assets/sprites/boss_freeze_king_weak.png"
+ "boss_freeze_king_weak": "assets/sprites/boss_freeze_king_weak.png",
+ "logo": "assets/sprites/logo.png"
 }
