@@ -48,10 +48,17 @@ export class Sign extends Entity {
 
 // ===== ギミック =====
 export class Spring extends Entity {
-  constructor(x, y) { super(x, y); this.type = 'spring'; this.w = 16; this.h = 10; this.y = (Math.floor(y / TILE) + 1) * TILE - 5; this.anim = 0; this.power = 820; }
+  constructor(x, y, level) {
+    super(x, y); this.type = 'spring'; this.w = 16; this.h = 10; this.anim = 0; this.power = 820;
+    const tx = Math.floor(x / TILE), ty = Math.floor(y / TILE);
+    // 床に埋めたバネ：上面を床と同じ高さにし、上から落ちてきた球だけを跳ね上げる（転がる球は通過）
+    this.recessed = !!level && level.solidAt(tx - 1, ty) && level.solidAt(tx + 1, ty) && level.solidAt(tx, ty + 1);
+    this.y = this.recessed ? ty * TILE + 3 : (ty + 1) * TILE - 5;
+  }
   update(dt) { super.update(dt); this.anim = Math.max(0, this.anim - dt * 4); }
   touch(p, c, g) {
-    if (c.ny < -0.3 && p.vy > -200) { p.launchUp(this.power); this.anim = 1; g.sfx('spring'); g.fx.burst(this.x, this.top, 6, '#ffe36e'); }
+    if (this.recessed && (!((p.preVy ?? p.vy) > 120) || Math.abs(p.vx) > 320)) return;
+    if (c.ny < -0.3 && (this.recessed || p.vy > -200)) { p.launchUp(this.power); this.anim = 1; g.sfx('spring'); g.fx.burst(this.x, this.top, 6, '#ffe36e'); }
   }
 }
 
@@ -396,7 +403,7 @@ export function spawnFromChar(s, level) {
     case 'h': return new Heart(x, y);
     case 'K': return new Checkpoint(x, y);
     case 'G': return new Goal(x, y);
-    case 'S': return new Spring(x, y);
+    case 'S': return new Spring(x, y, level);
     case 'O': return new Bumper(x, y);
     case '>': case '<': case 'A': return new Launcher(x, y, s.ch);
     case 'x': return new Switch(x, y, false);

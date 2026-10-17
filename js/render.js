@@ -322,14 +322,15 @@ export class Renderer {
       if (!gen && layer === 'mid' && bgImage(this.assets.sprites || {}, this.theme, 'far')) continue; // 生成した遠景だけの時はコードの中景を重ねない
       const img = gen || this.bgLayer(this.theme, layer);
       const W = gen ? (gen.width / gen.height) * 360 : 1024;
-      const ox = -((camX * k) % W);
-      const oy = (viewH - 360) + (g.level.ph - viewH - camY) * ky;
+      // 背景は揺らさない（揺れは手前の世界だけ）。負の座標でもずれない正しい剰余で並べる
+      const sx = g.cam.x * k, i0 = Math.floor(sx / W);
+      const ox = -(sx - i0 * W);
+      const oy = Math.round(((viewH - 360) + (g.level.ph - viewH - g.cam.y) * ky) * S) / S;
       if (gen) {
         // 生成画像は1枚おきに左右反転して並べる（端が必ずつながる）
         ctx.globalAlpha = 0.88; // 手前のゲーム要素が見やすいよう、少しだけ空色になじませる
-        const i0 = Math.floor((camX * k) / W) - 1;
-        for (let i = i0, x = ox - W; x < viewW; i++, x += W) {
-          if (i % 2) { ctx.save(); ctx.translate(x + W, oy); ctx.scale(-1, 1); ctx.drawImage(img, 0, 0, W, 360); ctx.restore(); }
+        for (let i = i0 - 1, x = ox - W; x < viewW; i++, x += W) {
+          if (i & 1) { ctx.save(); ctx.translate(x + W, oy); ctx.scale(-1, 1); ctx.drawImage(img, 0, 0, W, 360); ctx.restore(); }
           else ctx.drawImage(img, x, oy, W, 360);
         }
         ctx.globalAlpha = 1;

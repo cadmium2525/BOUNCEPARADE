@@ -254,6 +254,7 @@ export class Player {
     const sp = Math.hypot(this.vx, this.vy);
     if (sp > MAX_SPEED) { this.vx *= MAX_SPEED / sp; this.vy *= MAX_SPEED / sp; }
 
+    this.preVy = this.vy; // 衝突前の落下速度（床に埋めたバネの判定用）
     this.integrate(dt, input);
 
     // 見た目の回転
