@@ -10,7 +10,7 @@ const ALIAS = {
   bossHit: 'bossHit', bossDown: 'bossDown', explode: 'explode', phase2: 'bossWarn', bossWarn: 'bossWarn', charge: 'charge', thunder: 'thunder', thunderWarn: 'charge',
   windShift: 'wind', tired: 'deny', puff: 'land', cool: 'freeze', freeze: 'freeze', reheat: 'melt', web: 'cannon', spiderTurn: 'click', jump: 'spring',
   rumble: 'charge', drill: 'break', stun: 'bossHit', clamp: 'switch', icePillar: 'freeze', iceShot: 'cannon', shield: 'armor',
-  goal: 'goal', coin: 'coin', ui: 'ui', uiBack: 'uiBack', uiStart: 'uiStart', reward: 'reward',
+  goal: 'goal', pop: 'bounce_light', coin: 'coin', ui: 'ui', uiBack: 'uiBack', uiStart: 'uiStart', reward: 'reward',
 };
 
 export class AudioManager {

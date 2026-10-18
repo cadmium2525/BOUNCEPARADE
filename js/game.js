@@ -222,6 +222,13 @@ export class Game {
     const gy = this.level.groundBelow(base.x, base.y - 8);
     return { x: base.x, y: (gy ?? base.y) - p.def.r - 1 };
   }
+  // シャボン玉がトゲで割れた：無敵中でも割れて、直前の安全地点へ（落下と同じ扱い）
+  onPop(p) {
+    if (this._popT && this.time - this._popT < 0.2) return;
+    this._popT = this.time;
+    this.fx.burst(p.x, p.y, 18, '#cfefff', 200); this.sfx('pop');
+    this.onPit(p);
+  }
   onPit(p) {
     p.hp -= 1; this.sfx('fall');
     if (p.hp <= 0) { p.dead = true; this.onPlayerDead(); return; }

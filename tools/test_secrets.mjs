@@ -26,7 +26,7 @@ function run(id, ball, x, y, secs, policy, want, opts = {}) {
   const g = new Game({ stage: st, data, loadout: [ball, 'soccer'], collected, owned: [ball] });
   const p = g.player;
   p.setBall(ball); p.x = p.px = x * TILE + 8; p.y = p.py = y * TILE + 8; p.vx = 0; p.vy = 0;
-  if (opts.god) p.maxHp = p.hp = 99;
+  if (opts.god || opts.tough) p.maxHp = p.hp = 99;
   for (let f = 0; f < secs * 60; f++) {
     if (opts.god) p.invuln = Math.max(p.invuln, 0.05);
     g.update(1 / 60, { ...noInput(), ...policy(g, p, f) });
@@ -42,6 +42,8 @@ expect('丘 ピンポン玉（高い壁の上から）', run('tutorial', 'pingpo
 expect('丘 ピンポン玉（地面から）', run('tutorial', 'pingpong', 168, 16, 10, (g, p) => ({ right: p.x < 172 * 16, left: p.x > 173 * 16, bounce: true }), 'tutorial:ball'), false);
 // 工場：バネ → 磁石でレール
 expect('工場 磁石', run('factory', 'magnet', 21, 15, 25, (g, p) => ({ right: p.y < 6 * 16 || p.x < 24 * 16, bounce: true }), 'factory:heart', { god: true }), true);
+expect('工場 シャボン玉（トゲの上を漂う：報告のグリッチ）', run('factory', 'bubble', 40, 4, 25, () => ({ right: true, bounce: true }), 'factory:heart', { tough: true }), false);
+expect('工場 シャボン玉（バネから）', run('factory', 'bubble', 21, 15, 25, (g, p) => ({ right: true, bounce: true }), 'factory:heart', { god: true }), false);
 expect('工場 ピンポン玉', run('factory', 'pingpong', 21, 15, 25, (g, p) => ({ right: true, bounce: true }), 'factory:heart', { god: true }), false);
 // 天空：スライムで煙突
 expect('天空 スライム', run('sky', 'slime', 180, 16, 30, (g, p, f) => ({ left: p.stuck && p.stuck.ny < -0.5, right: !p.stuck && p.y < 5 * 16, bouncePressed: f % 20 === 0, bounce: f % 20 < 2 }), 'sky:ball'), true);

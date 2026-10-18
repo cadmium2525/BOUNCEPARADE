@@ -16,7 +16,7 @@ const P = {
   marble: { kind: 'roll', g: 1, airAccel: 420, airMax: 140, friction: 55, wind: 0.5, desc: '小さく重い。せまい穴を通り、勢いを保って転がる。' },
   pingpong: { kind: 'bounce', bounceV: 560, g: 0.75, airAccel: 1150, airMax: 215, airDrag: 800, wind: 1.6, desc: '軽くてよく跳ねる。いちばん高く跳べる。弾をはね返す。', reflect: true },
   bowling: { kind: 'roll', g: 1.55, airAccel: 320, airMax: 120, friction: 110, wind: 0, heavy: true, desc: '重量で壁・装甲を壊す。風に流されない。' },
-  bubble: { kind: 'float', g: 0.12, maxFall: 70, airAccel: 520, airMax: 150, airDrag: 300, wind: 3, rise: 900, riseMax: 150, desc: 'ふわりと漂う。押している間は上昇。' },
+  bubble: { kind: 'float', g: 0.12, maxFall: 70, airAccel: 520, airMax: 150, airDrag: 300, wind: 3, rise: 900, riseMax: 150, liftTime: 1.0, desc: 'ふわりと漂う。押すと少しの間だけ上昇（地面や上向きの風で回復）。' },
   fire: { kind: 'bounce', bounceV: 520, g: 1, airAccel: 950, airMax: 230, airDrag: 700, wind: 1, lavaProof: true, melt: true, spriteScale: 1.3, desc: '溶岩の上で跳ねられる。氷や木箱を溶かす。' },
   rugby: { kind: 'bounce', bounceV: 500, g: 1, airAccel: 900, airMax: 260, airDrag: 500, wind: 1, capsule: true, desc: '楕円形。不規則に跳ね、回転で前へ転がる。' },
   magnet: { kind: 'bounce', bounceV: 380, g: 1, airAccel: 800, airMax: 200, airDrag: 600, wind: 0.6, magnet: true, desc: '押している間、磁気レールに吸い付き伝って進む。' },
@@ -29,7 +29,7 @@ const P = {
   beach: { kind: 'bounce', bounceV: 470, g: 0.5, airAccel: 700, airMax: 170, airDrag: 400, wind: 2.2, desc: '大きく軽い。ゆっくり落ちる。' },
   glass: { kind: 'roll', g: 1, airAccel: 450, airMax: 150, friction: 8, wind: 0.6, desc: 'つるつる。ほとんど減速せずに転がる。' },
   spike: { kind: 'roll', g: 1.4, airAccel: 330, airMax: 130, friction: 160, wind: 0, heavy: true, spiky: true, spriteScale: 1.3, desc: '重く鋭い。触れた敵をすべて倒す。' },
-  dandelion: { kind: 'float', g: 0.07, maxFall: 45, airAccel: 600, airMax: 170, airDrag: 260, wind: 4, rise: 700, riseMax: 120, desc: '風に乗って遠くへ。押すと上昇。' },
+  dandelion: { kind: 'float', g: 0.07, maxFall: 45, airAccel: 600, airMax: 170, airDrag: 260, wind: 4, rise: 700, riseMax: 120, liftTime: 1.2, desc: '風に乗って遠くへ。押すと少しの間だけ上昇（地面や上向きの風で回復）。' },
 };
 
 export function buildBallDefs(atlas) {

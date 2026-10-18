@@ -510,6 +510,13 @@ export class Renderer {
     } else if (p.mult < 0.6 && d.kind === 'bounce') {
       ctx.fillStyle = '#7dd3ff'; ctx.font = 'bold 9px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('▼', x, y - d.hitR - 4);
     }
+    // 浮力ゲージ（シャボン玉・綿毛玉）
+    if (d.kind === 'float' && p.lift < 0.999) {
+      ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+      ctx.beginPath(); ctx.arc(x, y, d.hitR + 6, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = p.lift > 0.25 ? '#7de3ff' : '#ff6b6b';
+      ctx.beginPath(); ctx.arc(x, y, d.hitR + 6, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * p.lift); ctx.stroke();
+    }
     if (p.queue && !p.queue.forced) {
       const qd = g.balls[p.queue.id];
       ctx.globalAlpha = 0.6 + 0.3 * Math.sin(t * 20);

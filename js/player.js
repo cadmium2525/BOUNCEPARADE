@@ -31,6 +31,7 @@ export class Player {
     this.dead = false;
     this.lastSafe = { x, y };
     this.wind = { x: 0, y: 0 };
+    this.lift = 1;
   }
 
   setBall(id) {
@@ -133,6 +134,7 @@ export class Player {
     this.morphT = Math.max(0, this.morphT - dt);
     this.squash *= Math.pow(0.0005, dt);
     this.groundT += dt;
+    if (this.groundT < 0.1) this.lift = Math.min(1, this.lift + dt * 2.5); // 浮力ゲージは地面で回復
 
     // 入力されたボール（最新の1件）
     if (input.taps.length) this.requestBall(input.taps[input.taps.length - 1], 'manual');
@@ -224,9 +226,14 @@ export class Player {
       }
       // 重力
       let gs = d.g;
-      if (d.kind === 'float' && input.bounce) {
-        this.vy -= d.rise * dt;
-        if (this.vy < -d.riseMax) this.vy = -d.riseMax;
+      // 浮力ゲージ：上昇できるのは liftTime 秒ぶん。地面・足場か上向きの風で回復
+      if (d.kind === 'float') {
+        if (this.wind.y < -300) this.lift = Math.min(1, this.lift + dt * 2.5);
+        if (input.bounce && this.lift > 0) {
+          this.lift = Math.max(0, this.lift - dt / (d.liftTime || 1));
+          this.vy -= d.rise * dt;
+          if (this.vy < -d.riseMax) this.vy = -d.riseMax;
+        }
       }
       if (d.magnet && input.bounce) {
         const m = this.findMagnet();
@@ -352,6 +359,7 @@ export class Player {
       if (c.box && c.box.carries) this.riding = c.box;
     }
     // 危険タイル
+    if (c.type === T.SPIKE && d.kind === 'float') { g.onPop(this); return; } // シャボン玉・綿毛玉はトゲで割れる
     if (c.type === T.SPIKE) { if (this.hurt(n.x, n.y, 'spike')) { this.vy = n.y < -0.5 ? -480 : this.vy; return; } }
     if (c.type === T.LAVA && !d.lavaProof) { if (this.hurt(n.x, n.y, 'lava')) { this.vy = -620; return; } }
     if (c.type === T.LAVA && d.lavaProof && floor) g.onLavaTouch(this);
