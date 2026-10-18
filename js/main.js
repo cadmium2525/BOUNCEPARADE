@@ -152,15 +152,36 @@ class App {
 
   draw(alpha) {
     const ctx = this.ctx;
+    if (this.portrait && this.touchMode) { this.drawRotatePrompt(); return; }
     ctx.setTransform(this.S, 0, 0, this.S, 0, 0);
     ctx.imageSmoothingEnabled = true;
     this.scene.draw(ctx, alpha);
-    if (this.portrait && this.touchMode) {
-      ctx.setTransform(this.S, 0, 0, this.S, 0, 0);
-      ctx.fillStyle = 'rgba(10,10,30,0.92)'; ctx.fillRect(0, 0, this.W, this.H);
-      ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.font = '900 18px "M PLUS Rounded 1c", sans-serif';
-      ctx.fillText('📱↻ 横向きにしてあそんでね', this.W / 2, this.H / 2);
-    }
+  }
+
+  // 縦向きの案内：画面の幅を基準に、ほどよい大きさで描く
+  drawRotatePrompt() {
+    const ctx = this.ctx, cw = this.canvas.width, ch = this.canvas.height;
+    const k = cw / 360; // 幅 360 の論理座標
+    const W = 360, H = ch / k, t = performance.now() / 1000;
+    ctx.setTransform(k, 0, 0, k, 0, 0);
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, '#1b1b46'); g.addColorStop(1, '#3a2470');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    const logo = this.assets?.sprites?.logo;
+    if (logo) { const lw = 260, lh = (logo.height / logo.width) * lw; ctx.drawImage(logo, W / 2 - lw / 2, H * 0.22 - lh / 2, lw, lh); }
+    // スマホのアイコンが横に倒れるアニメーション
+    const phase = (t % 2.4) / 2.4;
+    const rot = phase < 0.25 ? 0 : phase < 0.55 ? ((phase - 0.25) / 0.3) * (Math.PI / 2) : Math.PI / 2;
+    ctx.save(); ctx.translate(W / 2, H * 0.52); ctx.rotate(rot);
+    ctx.lineWidth = 5; ctx.strokeStyle = '#fff'; ctx.fillStyle = 'rgba(255,255,255,0.08)';
+    ctx.beginPath(); ctx.roundRect ? ctx.roundRect(-30, -52, 60, 104, 12) : ctx.rect(-30, -52, 60, 104); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.fillRect(-10, 40, 20, 4);
+    ctx.restore();
+    ctx.fillStyle = '#ffe14d'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.font = '900 20px "M PLUS Rounded 1c", sans-serif';
+    ctx.fillText('横向きにしてあそんでね', W / 2, H * 0.72);
+    ctx.fillStyle = 'rgba(255,255,255,0.7)'; ctx.font = '700 12px "M PLUS Rounded 1c", sans-serif';
+    ctx.fillText('画面の向きのロックを解除してください', W / 2, H * 0.72 + 28);
   }
 
   // 開発用：ステージ全体を1枚に描く（?map=factory）
